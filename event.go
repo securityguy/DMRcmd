@@ -157,7 +157,7 @@ func eventAction(d dmrData, action configEventAction) {
 	args = append(args, action.Run)
 	text := action.Run
 
-	// Iterage through arguments
+	// Iterate through arguments
 	for _, a := range action.Args {
 
 		// Make substitutions

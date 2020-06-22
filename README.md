@@ -1,6 +1,6 @@
 # DMRcmd
 
-This program acts as a amateur radio DMR network server and executes commands based on the traffic it receives.
+This program acts as an amateur radio DMR network server and executes commands based on the traffic it receives.
 It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ).
 
 ###Cautions
@@ -17,7 +17,7 @@ Users **must** ensure that this program it **not** used in a way that places per
 property at risk. It is not suitable for any application even remotely associated with life safety.
 It should not be run on a computer containing sensitive or valuable information.
 
-By default this program does not execute any events. The user is solely responsible for what they
+By default, this program does not execute any events. The user is solely responsible for what they
 configure it to do.
 
 It is up to each user to determine the suitability of this software for their specific application.
@@ -37,10 +37,10 @@ If you encounter any errors please create an issue in Github.
 
 Notes:
  - Once compiled, the binary and configuration file can simply be copied to another computer.
- - Go is required only to compile the software. It need not be installed to run the compiled program.
+ - Go is only required to compile the software. It is not required to run the compiled program.
  - Windows users should consider installing Git from https://git-scm.com/
  
-###Configuration 
+###Configuration
 
 By default, configuration information is read from dmrcmd.conf in the working directory. 
 The full path to the configuration file can optionally be passed as the first (and only) 
@@ -105,5 +105,5 @@ By using this software you assume all risks whatsoever. This software is provide
 without any warranty of any kind, either expressed or implied, including, but not limited to,
 the implied warranties of merchantability and fitness for a particular purpose.
  
-If you do not agree to the licence and these terms you are prohibited from using this software
+If you do not agree to the licence and these terms, you are prohibited from using this software
 or any part thereof.
