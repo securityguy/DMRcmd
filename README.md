@@ -3,7 +3,7 @@
 This program acts as an amateur radio DMR network server and executes commands based on the traffic it receives.
 It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ).
 
-###Cautions
+### Cautions
 
 The DMR protocol is not secure and this application allows the execution of
 the system commands specified in the configuration file. Anyone with a suitable receiver can
@@ -24,7 +24,7 @@ It is up to each user to determine the suitability of this software for their sp
 
 This software is intended for amateur radio and educational purposes only. 
 
-###Compiling
+### Compiling
 
 This program is written in Go (aka golang). To compile:
 
@@ -40,7 +40,7 @@ Notes:
  - Go is only required to compile the software. It is not required to run the compiled program.
  - Windows users should consider installing Git from https://git-scm.com/
  
-###Configuration
+### Configuration
 
 By default, configuration information is read from dmrcmd.conf in the working directory. 
 The full path to the configuration file can optionally be passed as the first (and only) 
@@ -68,7 +68,7 @@ sends upwards of 16 data packets, so lowering the value below 18 will likely res
 in the event triggering if the PTT is bumped. If this is not a concern, the "minimum" value in the
 configuration file can be changed to 1.
 
-###Pi-Star Users
+### Pi-Star Users
 
 Pi-Star contains a "DRM Gateway" that is capable of routing DMR traffic to multiple servers. The most
 straightforward approach to using this software is to send a range of DMR IDs to
@@ -96,7 +96,7 @@ considered for the event.
 The DMR ID and password in the Pi-Star DMR Gateway configuration must match a configuration in DMRcmd
 or authentication will fail and no messages will be sent.
 
-###Licence and Disclaimers
+### Licence and Disclaimers
 
 This software is licensed under GPL v3 and is intended for amateur radio and educational use only.
 Please see the included LICENSE file.
