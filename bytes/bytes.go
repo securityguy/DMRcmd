@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2020 by Eric Jacksch VE3XEJ
+	Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@ import (
 
 type Bytes []byte
 
-// Convenience function
+// New is a convenience function to create an array of bytes
 func New() Bytes {
 	return Bytes{}
 }
 
-// Select bytes by location
+// Get select bytes by location
 func (buf *Bytes) Get(start int, length int) Bytes {
 
 	// Check for nil pointer
@@ -42,7 +42,7 @@ func (buf *Bytes) Get(start int, length int) Bytes {
 	return tmp[start : start+length]
 }
 
-// Select bytes by location and return as a string
+// GetString gets select bytes by location and return as a string
 func (buf *Bytes) GetString(start int, length int) string {
 
 	// Check for nil pointer
@@ -54,10 +54,10 @@ func (buf *Bytes) GetString(start int, length int) string {
 	return string(buf.Get(start, length))
 }
 
-// Select bytes by location and return as a Uint32
+// GetUint32 gets selected bytes by location and return as an Uint32
 func (buf *Bytes) GetUint32(start int, length int) uint32 {
 
-	// Check for nil pointer or length too big for a uint32
+	// Check for nil pointer or length too big for an uint32
 	if buf == nil || length > 4 {
 		return 0
 	}
@@ -80,7 +80,7 @@ func (buf *Bytes) Append(slice Bytes) {
 	}
 }
 
-// Convert string to bytes and append
+// AppendString converts string to bytes and appends
 func (buf *Bytes) AppendString(s string) {
 
 	// Check for nil pointer
@@ -91,7 +91,7 @@ func (buf *Bytes) AppendString(s string) {
 	buf.Append([]byte(s))
 }
 
-// Convert uint32 to bytes and append
+// AppendUint32 converts uint32 to bytes and appends
 func (buf *Bytes) AppendUint32(i uint32) {
 
 	// Check for nil pointer
@@ -108,7 +108,7 @@ func (buf *Bytes) AppendUint32(i uint32) {
 	buf.Append(bytes)
 }
 
-// Convert bytes to uint32
+// Uint32 converts bytes to uint32 and appends
 func (buf *Bytes) Uint32() uint32 {
 
 	// Check for nil pointer
@@ -129,7 +129,7 @@ func (buf *Bytes) Uint32() uint32 {
 	return ret
 }
 
-// Compare bytes and determine if identical
+// Equal compares bytes and returns True if identical
 func (buf *Bytes) Equal(m Bytes) bool {
 
 	// Check for nil pointer
@@ -151,7 +151,7 @@ func (buf *Bytes) Equal(m Bytes) bool {
 	return true
 }
 
-// Compare to start of bytes
+// MatchStart compares to the start of bytes and returns true if they match
 func (buf *Bytes) MatchStart(m Bytes) bool {
 
 	// Check for nil pointer
@@ -177,7 +177,7 @@ func (buf *Bytes) MatchStart(m Bytes) bool {
 	return true
 }
 
-// Compare string to start of bytes
+// MatchStartString Compares a string to start of bytes and returns true if they match
 func (buf *Bytes) MatchStartString(m string) bool {
 	return buf.MatchStart([]byte(m))
 }

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2020 by Eric Jacksch VE3XEJ
+	Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import (
 	"dmrcmd/bytes"
 )
 
-// Login command is RPTL followed by 4 byte ID
+// RPTL - Login command is RPTL followed by 4 byte ID
 func RPTL(dg datagram) {
 	dg.client = dg.data.Get(4, 4)
 	id := dg.client.Uint32()
@@ -56,7 +56,7 @@ func RPTL(dg datagram) {
 	sendUDP(dg, reply)
 }
 
-// Authentication
+// RPTK - Authentication
 func RPTK(dg datagram) {
 	dg.client = dg.data.Get(4, 4)
 	id := dg.client.Uint32()
@@ -78,7 +78,7 @@ func RPTK(dg datagram) {
 	}
 }
 
-// Configuration message
+// RPTC - Configuration message
 func RPTC(dg datagram) {
 	dg.client = dg.data.Get(4, 4)
 	id := dg.client.Uint32()
@@ -93,7 +93,7 @@ func RPTC(dg datagram) {
 	}
 }
 
-// Ping
+// RPTPING - Ping
 func RPTPING(dg datagram) {
 	dg.client = dg.data.Get(7, 4)
 	id := dg.client.Uint32()
@@ -108,7 +108,7 @@ func RPTPING(dg datagram) {
 	}
 }
 
-// DMR Data
+// DMRD - DMR Data
 func DMRD(dg datagram) {
 	var d dmrData
 	d.seq = dg.data.GetUint32(4, 1)
@@ -166,7 +166,7 @@ func DMRD(dg datagram) {
 	eventFilter(d)
 }
 
-// DMR Talker Alias
+// DMRA - DMR Talker Alias
 func DMRA(dg datagram) {
 	dg.client = dg.data.Get(4, 4)
 	id := dg.client.Uint32()

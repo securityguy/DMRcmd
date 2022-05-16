@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2020 by Eric Jacksch VE3XEJ
+	Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import (
 )
 
 const ProductName = "dmrcmd"
-const ProductVersion = "0.0.1"
+const ProductVersion = "0.0.2"
 
 // Structure to hold UDP message metadata and contents
 // This avoids having to pass multiple variables

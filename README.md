@@ -32,8 +32,8 @@ This program is written in Go (aka golang). To compile:
 2) Download or clone the repo from https://github.com/securityguy/DMRcmd
 3) Change to the DMRCmd directory and type `go build`
 
-This software should compile and run on various flavours of Linux, Windows, and MacOS.
-If you encounter any errors please create an issue in Github.
+This software should compile and run on various flavours of Linux, Windows, and macOS.
+If you encounter any errors please create an issue in GitHub.
 
 Notes:
  - Once compiled, the binary and configuration file can simply be copied to another computer.
@@ -97,6 +97,8 @@ The DMR ID and password in the Pi-Star DMR Gateway configuration must match a co
 or authentication will fail and no messages will be sent.
 
 ### Licence and Disclaimers
+
+Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ.
 
 This software is licensed under GPL v3 and is intended for amateur radio and educational use only.
 Please see the included LICENSE file.
