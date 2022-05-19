@@ -26,7 +26,7 @@ import (
 )
 
 const ProductName = "dmrcmd"
-const ProductVersion = "0.0.2"
+const ProductVersion = "0.0.3"
 
 // Structure to hold UDP message metadata and contents
 // This avoids having to pass multiple variables
@@ -43,7 +43,7 @@ func main() {
 	log.Printf("Started %s version %s", ProductName, ProductVersion)
 
 	// Load configuration - optionally using command line argument
-	configFile := "dmrcmd.conf"
+	configFile := "dmrcmd.json"
 	if len(os.Args) > 1 {
 		configFile = os.Args[1]
 	}

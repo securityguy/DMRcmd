@@ -4,6 +4,7 @@
 package main
 
 import (
+	"dmrcmd/ha"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,6 +17,7 @@ type configData struct {
 	Debug   bool           `json:"debug"`
 	Listen  string         `json:"listen"`
 	Minimum uint32         `json:"minimum,omitempty"`
+	HA      ha.Config      `json:"ha,omitempty"`
 	Clients []configClient `json:"clients"`
 	Events  []configEvent  `json:"events"`
 }
@@ -37,8 +39,10 @@ type configEvent struct {
 }
 
 type configEventAction struct {
-	Run  string   `json:"run,omitempty"`
-	Args []string `json:"args,omitempty"`
+	Run      string   `json:"run,omitempty"`
+	Args     []string `json:"args,omitempty"`
+	HAScript string   `json:"ha_script,omitempty"`
+	HAScene  string   `json:"ha_scene,omitempty"`
 }
 
 // Global instance of structure
@@ -70,7 +74,7 @@ func configure(fileName string) error {
 	for _, e := range config.Events {
 		if e.Enabled {
 			log.Printf("Loaded event %s src %d dst %d client %d talkgroup %v ip %s action %s",
-				e.Name, e.SRC, e.DST, e.Client, e.TalkGroup, e.IP, e.Action)
+				e.Name, e.SRC, e.DST, e.Client, e.TalkGroup, e.IP, actionToString(e.Action))
 		} else {
 			if config.Debug {
 				log.Printf("Event %s is not enabled, ignoring", e.Name)

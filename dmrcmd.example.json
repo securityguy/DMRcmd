@@ -2,6 +2,11 @@
   "debug": false,
   "listen": ":55555",
   "minimum": 18,
+  "ha": {
+    "enabled": false,
+    "server": "http://yourserverhere:8123",
+    "token": "YOUR_AUTHENTICATION_TOKEN"
+  },
   "clients": [
     {
       "id": 123456701,
@@ -51,6 +56,25 @@
         "args": [
           "/tmp/dmr.txt"
         ]
+      }
+    },
+    {
+      "enabled": false,
+      "name": "test4",
+      "src": 1234567,
+      "dst": 9999994,
+      "action": {
+        "ha_script": "flash_lights"
+      }
+    },
+    {
+      "enabled": false,
+      "name": "test5",
+      "src": 1234567,
+      "dst": 9999995,
+      "talkgroup": true,
+      "action": {
+        "ha_scene": "lights_off"
       }
     }
   ]

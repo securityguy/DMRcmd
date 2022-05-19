@@ -4,6 +4,8 @@
 package main
 
 import (
+	"dmrcmd/ha"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -128,7 +130,7 @@ func eventFilter(d dmrData) {
 
 		// All criteria met, perform action
 		log.Printf("Triggered event %s from=%d to=%d client=%d private=%v group=%v ip=%s action: %s",
-			c.Name, d.src, d.dst, d.client, d.private, d.group, d.ip, c.Action)
+			c.Name, d.src, d.dst, d.client, d.private, d.group, d.ip, actionToString(c.Action))
 		eventAction(d, c.Action)
 	}
 
@@ -138,6 +140,33 @@ func eventFilter(d dmrData) {
 
 // Perform action
 func eventAction(d dmrData, action configEventAction) {
+
+	// Is there a command to execute?
+	if action.Run != "" {
+		eventExecute(d, action)
+	}
+
+	if action.HAScript != "" {
+		h := ha.New(config.HA)
+		err := h.Script(action.HAScript)
+		if err != nil {
+			log.Printf("Error triggering Home Assistant script \"%s\": %s", action.HAScript, err.Error())
+		}
+		log.Printf("Successfully triggered Home Assistant script \"%s\"", action.HAScript)
+	}
+
+	if action.HAScene != "" {
+		h := ha.New(config.HA)
+		err := h.Scene(action.HAScene)
+		if err != nil {
+			log.Printf("Error triggering Home Assistant script \"%s\": %s", action.HAScene, err.Error())
+		}
+		log.Printf("Successfully triggered Home Assistant script \"%s\"", action.HAScene)
+	}
+}
+
+// Execute command
+func eventExecute(d dmrData, action configEventAction) {
 
 	// Build argument string starting with command
 	var args []string
@@ -194,4 +223,12 @@ func eventPurge() {
 			delete(stream, index)
 		}
 	}
+}
+
+func actionToString(c configEventAction) string {
+	a, err := json.Marshal(c)
+	if err != nil {
+		return ""
+	}
+	return string(a)
 }

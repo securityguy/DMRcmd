@@ -2,8 +2,10 @@
 
 Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ.
 
+This is early beta software. Please read this file in its entirety and use at your own risk.
+
 This program acts as an amateur radio DMR network server and executes commands based on the traffic it receives.
-It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLK).
+It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLX).
 
 Collaboration and pull requests are welcome.
 
@@ -49,12 +51,12 @@ Notes:
  
 ### Configuration
 
-By default, configuration information is read from dmrcmd.conf in the working directory. 
+By default, configuration information is read from dmrcmd.json in the working directory. 
 The full path to the configuration file can optionally be passed as the first (and only) 
 command line argument.
 
 Additional configuration documentation will be added at a later date. In the interim, 
-please refer to dmrcmd.conf.example. 
+please refer to dmrcmd.example.json.
 
 For security reasons, this program neither searches the execution path nor uses a shell to 
 execute commands. The full path to the program or script to be executed must be provided
@@ -119,12 +121,17 @@ To configure openSPOT to send traffic directly to DMRcmd for testing purpose:
 6) Click "Save"
 7) Update the DMRcmd config file to use the specified port.
 8) Add the DMR ID (usually 9 digits) and server password into the CMDcmd config file clients section.
-9) Start or re-start DMRcmd to read the new config file (by default dmrcmd.conf)
+9) Start or re-start DMRcmd to read the new config file (by default dmrcmd.json)
 
 Note that the Homebrew protocol is not supported. You must use MMDVM.
 
 Note that the procedure above adds the IP address and port you have specified to the "Custom servers" section of the
 server list, so you are free to uncheck advanced mode.
+
+### Home Assistant Integration
+
+Actions can trigger Home Assistant scenes and scripts. The HA section in the configuration file must be enabled
+and you must update the URL and TOKEN for your Home Assistant server.
 
 ### Licence and Disclaimers
 
