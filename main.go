@@ -101,22 +101,3 @@ func main() {
 		}
 	}
 }
-
-// Send packet to appropriate function in messages.go
-func dispatch(dg datagram) {
-	if dg.data.MatchStartString("RPTL") {
-		RPTL(dg)
-	} else if dg.data.MatchStartString("RPTK") {
-		RPTK(dg)
-	} else if dg.data.MatchStartString("RPTC") {
-		RPTC(dg)
-	} else if dg.data.MatchStartString("RPTPING") {
-		RPTPING(dg)
-	} else if dg.data.MatchStartString("DMRD") {
-		DMRD(dg)
-	} else if dg.data.MatchStartString("DMRA") {
-		DMRA(dg)
-	} else {
-		log.Printf("Unknown packet type from %s", dg.addr.String())
-	}
-}
