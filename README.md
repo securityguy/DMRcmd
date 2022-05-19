@@ -1,9 +1,16 @@
 # DMRcmd
 
+Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ.
+
 This program acts as an amateur radio DMR network server and executes commands based on the traffic it receives.
-It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ).
+It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLK).
+
+Collaboration and pull requests are welcome.
 
 ### Cautions
+
+The amateur radio protocols used by this application are not fully documented and as a result my implementation
+from scratch may contain errors.
 
 The DMR protocol is not secure and this application allows the execution of
 the system commands specified in the configuration file. Anyone with a suitable receiver can
@@ -47,7 +54,7 @@ The full path to the configuration file can optionally be passed as the first (a
 command line argument.
 
 Additional configuration documentation will be added at a later date. In the interim, 
-please refer to dmrcmd.conf for an example. 
+please refer to dmrcmd.conf.example. 
 
 For security reasons, this program neither searches the execution path nor uses a shell to 
 execute commands. The full path to the program or script to be executed must be provided
@@ -96,9 +103,30 @@ considered for the event.
 The DMR ID and password in the Pi-Star DMR Gateway configuration must match a configuration in DMRcmd
 or authentication will fail and no messages will be sent.
 
-### Licence and Disclaimers
+### openSPOT Users
 
-Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ.
+openSPOT does not include routing capability, so at this point configuring openSPOT to connect to DMRcmd will not
+allow it to connect to any DMR server. I plan to add pass-through capability in the future. However, at this time
+your best bet would be to check out DMRGateway by Jonathan Naylor (G4KLK).
+
+To configure openSPOT to send traffic directly to DMRcmd for testing purpose:
+
+1) Log into openSPOT and navigate to the "Connectors" page.
+2) At the bottom of the page, place a checkmark in "Advanced mode"
+3) Under DMR/Homebrew/MMDVM, select "MMDVM"
+4) Specify the IP address and port to connect to DMRcmd in the "Server address" and "Port (UDP)" fields respectively.
+5) Click "Add Server"
+6) Click "Save"
+7) Update the DMRcmd config file to use the specified port.
+8) Add the DMR ID (usually 9 digits) and server password into the CMDcmd config file clients section.
+9) Start or re-start DMRcmd to read the new config file (by default dmrcmd.conf)
+
+Note that the Homebrew protocol is not supported. You must use MMDVM.
+
+Note that the procedure above adds the IP address and port you have specified to the "Custom servers" section of the
+server list, so you are free to uncheck advanced mode.
+
+### Licence and Disclaimers
 
 This software is licensed under GPL v3 and is intended for amateur radio and educational use only.
 Please see the included LICENSE file.
