@@ -138,6 +138,8 @@ and you must update the URL and TOKEN for your Home Assistant server.
 This software is licensed under GPL v3 and is intended for amateur radio and educational use only.
 Please see the included LICENSE file.
 
+If GPL is an issue for you, please contact me for alternative arragements.
+
 By using this software you assume all risks whatsoever. This software is provided "as is"
 without any warranty of any kind, either expressed or implied, including, but not limited to,
 the implied warranties of merchantability and fitness for a particular purpose.
