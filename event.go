@@ -4,13 +4,14 @@
 package main
 
 import (
-	"dmrcmd/ha"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
 	"strings"
 	"time"
+
+	"dmrcmd/ha"
 )
 
 // Number of seconds after which to discard stream

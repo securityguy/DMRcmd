@@ -140,7 +140,7 @@ func DMRD(dg datagram) {
 
 	// Is this from an authenticated client?
 	if !clientCheck(d.client, dg.addr.String()) {
-		log.Printf("Igoring DMRD from unauthenticated %d @ %s\n", d.client, dg.addr.String())
+		log.Printf("Ignoring DMRD from unauthenticated %d @ %s\n", d.client, dg.addr.String())
 		return
 	}
 

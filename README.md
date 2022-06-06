@@ -11,7 +11,7 @@ Collaboration and pull requests are welcome.
 
 ### Cautions
 
-The amateur radio protocols used by this application are not fully documented and as a result my implementation
+The amateur radio protocols used by this application are not fully documented and as a result this implementation
 from scratch may contain errors.
 
 The DMR protocol is not secure and this application allows the execution of
@@ -19,7 +19,7 @@ the system commands specified in the configuration file. Anyone with a suitable 
 monitor DMR traffic, view the source and destination IDs, and program a radio to duplicate the
 traffic. 
 
-DMRcmd is intended for use on a private network. While it ignores traffic from unauthenticated sources,
+DMRcmd is intended for use on a private secure network. While it ignores traffic from unauthenticated sources,
 the DMR data packets are sent in unauthenticated UDP datagrams, making it easy to forge datagrams and trigger events.
 
 Users **must** ensure that this program it **not** used in a way that places persons or 
@@ -77,14 +77,16 @@ sends upwards of 16 data packets, so lowering the value below 18 will likely res
 in the event triggering if the PTT is bumped. If this is not a concern, the "minimum" value in the
 configuration file can be changed to 1.
 
-### Pi-Star Users
+### Pi-Star and DRMGateway Users
 
-Pi-Star contains a "DRM Gateway" that is capable of routing DMR traffic to multiple servers. The most
-straightforward approach to using this software is to send a range of DMR IDs to
+Pi-Star contains a "DRM Gateway" that is capable of routing DMR traffic to multiple servers. 
+DMRGateway by Jonathan Naylor (G4KLK) is also available as a stand-alone application from https://github.com/g4klx/DMRGateway.
+
+The most straightforward approach to using this software is to send a range of DMR IDs to
 DMRcmd, while allowing the remainder of your DMR traffic to flow to
-Brandmeister and/or DMR+ as usual.
+Brandmeister, DMR+, or other service as usual.
 
-For example, in Configuration -> Expert -> Full Edit -> DMR GW:
+For example, in the DMRGateway configuration file (Pi-Star users can access it at Configuration -> Expert -> Full Edit -> DMR GW):
 
     [DMR Network 2]
      Enabled=1
@@ -109,7 +111,7 @@ or authentication will fail and no messages will be sent.
 
 openSPOT does not include routing capability, so at this point configuring openSPOT to connect to DMRcmd will not
 allow it to connect to any DMR server. I plan to add pass-through capability in the future. However, at this time
-your best bet would be to check out DMRGateway by Jonathan Naylor (G4KLK).
+your best bet would be to use DMRGateway (link and configuration above).
 
 To configure openSPOT to send traffic directly to DMRcmd for testing purpose:
 
