@@ -29,7 +29,7 @@ func sendACK(dg datagram) {
 
 // Send ping reply (pong) to client
 func sendPONG(dg datagram) {
-	log.Printf("Sending pong to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
+	log.Printf("Pong to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
 	reply := bytes.New()
 	reply.AppendString("MSTPONG")
 	reply.Append(dg.client)

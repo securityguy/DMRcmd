@@ -5,17 +5,19 @@ package main
 
 import (
 	"crypto/sha256"
-	"dmrcmd/bytes"
 	"errors"
+
+	"dmrcmd/bytes"
 )
 
 // Structure to hold information about clients
 type client struct {
 	id            uint32
+	name          string
 	authenticated bool
 	password      string
 	salt          bytes.Bytes
-	ip            string
+	addr          string
 }
 
 // Create map
@@ -24,14 +26,15 @@ var clientList = make(map[uint32]client)
 // Add client
 // This can also be used to change the client's password
 // and force a re-authentication
-func clientAdd(id uint32, password string) {
+func clientAdd(newClient configClient) {
 	var c client
-	c.id = id
+	c.id = newClient.ID
+	c.password = newClient.Password
+	c.name = newClient.Name
 	c.authenticated = false
-	c.password = password
 	c.salt = bytes.Bytes{}
-	c.ip = ""
-	clientList[id] = c
+	c.addr = ""
+	clientList[c.id] = c
 }
 
 // Returns true if ID exists in map
@@ -74,7 +77,7 @@ func clientAuthenticate(id uint32, auth bytes.Bytes, ip string) bool {
 	if auth.Equal(expected) {
 		// success
 		result = true
-		c.ip = ip
+		c.addr = ip
 	}
 
 	// Salt can only be used once
@@ -86,13 +89,13 @@ func clientAuthenticate(id uint32, auth bytes.Bytes, ip string) bool {
 	return result
 }
 
-// Check if client is authenticated
-func clientCheck(id uint32, ip string) bool {
+// Check if client is authenticated. Note that addr contains the IP address and port.
+func clientCheck(id uint32, addr string) bool {
 	if !clientExist(id) {
 		return false
 	}
 
-	if clientList[id].authenticated == true && clientList[id].ip == ip {
+	if clientList[id].authenticated == true && clientList[id].addr == addr {
 		return true
 	}
 	return false

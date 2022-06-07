@@ -9,12 +9,26 @@
   },
   "clients": [
     {
+      "enabled": false,
+      "name": "Hotspot1",
       "id": 123456701,
       "password": "PASSWORD"
     },
     {
+      "enabled": false,
+      "name": "Hotspot2",
       "id": 123456702,
       "password": "PASSWORD"
+    }
+  ],
+  "servers": [
+    {
+      "enabled": false,
+      "name": "BM_Canada_3021",
+      "host": "hostname:62031",
+      "id": 123456709,
+      "password": "PASSWORD",
+      "default": true
     }
   ],
   "events": [

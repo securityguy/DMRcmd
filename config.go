@@ -4,12 +4,13 @@
 package main
 
 import (
-	"dmrcmd/ha"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
+
+	"dmrcmd/ha"
 )
 
 // Structure to hold configuration information
@@ -19,12 +20,24 @@ type configData struct {
 	Minimum uint32         `json:"minimum,omitempty"`
 	HA      ha.Config      `json:"ha,omitempty"`
 	Clients []configClient `json:"clients"`
+	Servers []configServer `json:"servers"`
 	Events  []configEvent  `json:"events"`
 }
 
 type configClient struct {
+	Enabled  bool   `json:"enabled"`
+	Name     string `json:"name"`
 	ID       uint32 `json:"id"`
 	Password string `json:"password"`
+}
+
+type configServer struct {
+	Enabled  bool   `json:"enabled"`
+	Name     string `json:"name"`
+	Host     string `json:"host"`
+	ID       uint32 `json:"id"`
+	Password string `json:"password"`
+	Default  bool   `json:"default"`
 }
 
 type configEvent struct {
@@ -66,8 +79,22 @@ func configure(fileName string) error {
 
 	// Iterate through clients and add
 	for _, c := range config.Clients {
-		clientAdd(c.ID, c.Password)
-		log.Printf("Loaded client %d", c.ID)
+		if c.Enabled {
+			clientAdd(c)
+			log.Printf("Loaded client %s [%d]", c.Name, c.ID)
+		} else {
+			log.Printf("Ignoring disabled client %s [%d]", c.Name, c.ID)
+		}
+	}
+
+	// Iterate through servers and add
+	for _, s := range config.Servers {
+		if s.Enabled {
+			serverAdd(s)
+			log.Printf("Loaded server %s [%s]", s.Name, s.Host)
+		} else {
+			log.Printf("Ignoring disabled server %s [%s]", s.Name, s.Host)
+		}
 	}
 
 	// Iterate through events and log
