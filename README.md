@@ -5,7 +5,7 @@ Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ.
 This is early beta software. Please read this file in its entirety and use at your own risk.
 
 This program acts as an amateur radio DMR network server using the Homebrew repeater protocol (MMDVMHost variant) and
-can be configured to execute commands based on the traffic it receives. 
+can be configured to execute commands based on the traffic it receives from the user's hotspot.
 
 It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLX).
 
