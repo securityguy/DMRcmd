@@ -86,7 +86,7 @@ The most straightforward approach to using this software is to send a range of D
 DMRcmd, while allowing the remainder of your DMR traffic to flow to
 Brandmeister, DMR+, or other service as usual.
 
-For example, in the DMRGateway configuration file (Pi-Star users can access it at Configuration -> Expert -> Full Edit -> DMR GW):
+For example, in the DMRGateway configuration file (Pi-Star users can access it at Configuration -> Expert -> Full Edit: DMR GW):
 
     [DMR Network 2]
      Enabled=1
@@ -94,7 +94,7 @@ For example, in the DMRGateway configuration file (Pi-Star users can access it a
      Port=55555
      PCRewrite=2,8999900,2,8999900,100
      TGRewrite=2,8999900,2,8999900,100
-     Password=PASSWORD
+     Password=<PASSWORD>
      Debug=0
      Id=<DMR ID>
      Name=DMRcmd
