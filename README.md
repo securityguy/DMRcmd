@@ -117,11 +117,11 @@ care to ensure that you do not inadvertently route traffic intended to trigger D
 ### openSPOT Users
 
 openSPOT does not include multi-DMR server routing capability, so at this point configuring openSPOT to connect to 
-DMRcmd will not allow other traffic to reach a DMR server. I plan to add routing capability in the future. 
+DMRcmd will not allow other traffic to reach a DMR server. I am in the process of adding passthrough capability. 
 However, at this time your best bet would be to configure your openSPOT to send traffic to
 DMRGateway (link and configuration above) and configure DMRGateay to send selected traffic to DMRcmd.
 
-To configure openSPOT to send traffic directly to DMRcmd:
+To configure openSPOT to send traffic to DMRcmd:
 
 1) Log into openSPOT and navigate to the "Connectors" page.
 2) At the bottom of the page, place a checkmark in "Advanced mode"
