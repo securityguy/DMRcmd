@@ -11,7 +11,7 @@ import (
 )
 
 // Send NAC to client (MSTNAK + id)
-func sendNAK(dg datagram) {
+func sendNAK(dg *datagram) {
 	log.Printf("Sending RPTNAK to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
 	reply := bytes.New()
 	reply.AppendString("MSTNAK")
@@ -20,7 +20,7 @@ func sendNAK(dg datagram) {
 }
 
 // Send ACK to client (RPTACK + id)
-func sendACK(dg datagram) {
+func sendACK(dg *datagram) {
 	log.Printf("Sending RPTACK to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
 	reply := bytes.New()
 	reply.AppendString("RPTACK")
@@ -29,7 +29,7 @@ func sendACK(dg datagram) {
 }
 
 // Send ping reply (pong) to client
-func sendPONG(dg datagram) {
+func sendPONG(dg *datagram) {
 	log.Printf("Pong to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
 	reply := bytes.New()
 	reply.AppendString("MSTPONG")
@@ -38,7 +38,7 @@ func sendPONG(dg datagram) {
 }
 
 // Send UDP datagram
-func sendUDP(dg datagram, buf bytes.Bytes) {
+func sendUDP(dg *datagram, buf bytes.Bytes) {
 	n, err := dg.pc.WriteTo(buf, dg.addr)
 	if err != nil {
 		log.Printf("error sending UDP datagram to %s\n", dg.addr.String())

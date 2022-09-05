@@ -8,7 +8,14 @@
       "mode": "proxy",
       "listen": ":55555",
       "id": 123456701,
-      "server": "IP:PORT OF MMDVM SERVER TO PROXY CONNECTION TO"
+      "server": "IP:PORT OF MMDVM SERVER TO PROXY CONNECTION TO",
+      "drop": [
+        8999990,
+        8999991,
+        8999992,
+        8999993,
+        8999994
+      ]
     },
     {
       "name": "Pi-Star",

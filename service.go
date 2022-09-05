@@ -25,7 +25,7 @@ type datagram struct {
 
 func startService(id uint32) {
 
-	// Check that hotspot entry exists
+	// CheckAuthenticated that hotspot entry exists
 	if !hotspot.Exists(id) {
 		log.Printf("Unable to start server, %d does not exist", id)
 		return

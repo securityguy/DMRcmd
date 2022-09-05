@@ -55,7 +55,7 @@ func runServer(h hotspot.Hotspot) {
 		}
 
 		// Process the datagram
-		dispatch(dg)
+		dispatch(&dg)
 
 		// Get current time
 		now := time.Now().Unix()

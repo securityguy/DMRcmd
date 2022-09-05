@@ -40,7 +40,7 @@ This program is written in Go (aka golang). To compile:
 
 1) If you have not already done so, install Go from https://golang.org/ or using your package manager.
 2) Download or clone the repo from https://github.com/securityguy/DMRcmd.
-3) Change to the DMRCmd directory and type `go build`.
+3) Change to the DMRcmd directory and type `go build`.
 
 This software should compile and run on various flavours of Linux, Windows, and macOS.
 If you encounter any errors please create an issue in GitHub.
@@ -145,6 +145,10 @@ If DMRcmd is configured in proxy mode, it will proxy the server authentication a
 configure OpenSPOT with the DMR ID and password that the DMR network (such as BrandMeister) expects. In proxy mode,
 DMRcmd will *not* authenticate the hotspot or verify the credentials.
 
+**In proxy mode, all DMR traffic, including to destinations intended to trigger events, will be forwarded to the 
+destination DMR server unless the destination DMR ID is listed in the "drop" section of the hotspot configuration.
+DMR IDs listed in the "drop" section will be dropped by the proxy in both directions, source and destination, group and private calls.**
+
 ### Home Assistant Integration
 
 Actions can trigger Home Assistant scenes and scripts. The HA section in the configuration file must be enabled
@@ -155,7 +159,7 @@ actions or delays are desired.
 
 Note that by default Home Assistant uses HTTP for web console and API access. HTTP is not secure.
 
-### Licence, Additional Terms, and Disclaimers
+### License, Additional Terms, and Disclaimers
 
 This software is licensed under GPL v3 and is intended for amateur radio and educational use only.
 Please see the included LICENSE file.

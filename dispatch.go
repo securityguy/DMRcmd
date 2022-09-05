@@ -9,7 +9,7 @@ import (
 )
 
 // Send packet to appropriate function in messages.go
-func dispatch(dg datagram) {
+func dispatch(dg *datagram) {
 	if dg.data.MatchStartString("RPTL") {
 		RPTL(dg)
 	} else if dg.data.MatchStartString("RPTK") {

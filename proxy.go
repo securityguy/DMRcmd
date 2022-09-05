@@ -75,7 +75,14 @@ func runProxy(h hotspot.Hotspot) {
 		}
 
 		// Process the datagram
-		dispatch(dg)
+		dispatch(&dg)
+
+		if dg.drop {
+			if config.Debug {
+				log.Printf("Proxy dropping %d bytes from %s", n, dg.addr.String())
+			}
+			continue
+		}
 
 		// Determine destination
 		if addr.String() == h.Server {

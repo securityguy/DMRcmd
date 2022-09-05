@@ -66,6 +66,9 @@ func configure(fileName string) error {
 		if h.Enabled {
 			hotspot.Add(h)
 			log.Printf("Added hotspot %s [%d]", h.Name, h.ID)
+			if len(h.Drop) > 0 {
+				log.Printf("Hotspot %s [%d] configured to drop: %v", h.Name, h.ID, h.Drop)
+			}
 		} else {
 			log.Printf("Ignoring disabled hotspot %s [%d]", h.Name, h.ID)
 		}

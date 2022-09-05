@@ -14,13 +14,14 @@ import (
 
 // Hotspot information
 type Hotspot struct {
-	Enabled       bool   `json:"enabled"`
-	Name          string `json:"name"`
-	ID            uint32 `json:"id"`
-	Password      string `json:"password"`
-	Mode          string `json:"mode"`
-	Listen        string `json:"listen"`
-	Server        string `json:"server"`
+	Enabled       bool     `json:"enabled"`
+	Name          string   `json:"name"`
+	ID            uint32   `json:"id"`
+	Password      string   `json:"password"`
+	Mode          string   `json:"mode"`
+	Listen        string   `json:"listen"`
+	Server        string   `json:"server"`
+	Drop          []uint32 `json:"drop"`
 	Proxy         bool
 	authenticated bool
 	salt          bytes.Bytes
@@ -118,8 +119,8 @@ func Authenticate(id uint32, auth bytes.Bytes, ip string) bool {
 	return result
 }
 
-// Check if client is authenticated. Note that addr contains the IP address and port.
-func Check(id uint32, addr string) bool {
+// CheckAuthenticated if client is authenticated. Note that addr contains the IP address and port.
+func CheckAuthenticated(id uint32, addr string) bool {
 	if !Exists(id) {
 		return false
 	}
@@ -127,5 +128,26 @@ func Check(id uint32, addr string) bool {
 	if hotspots[id].authenticated == true && hotspots[id].addr == addr {
 		return true
 	}
+	return false
+}
+
+// CheckDrop returns true if the specified destination is listed in the drop list for the hotspot
+func CheckDrop(id uint32, src uint32, dst uint32) bool {
+
+	// Make sure ID exists
+	if !Exists(id) {
+		return false
+	}
+
+	// Get record
+	h := hotspots[id]
+
+	// Check if source or dest are on the drop list
+	for _, id := range h.Drop {
+		if id == src || id == dst {
+			return true
+		}
+	}
+
 	return false
 }
