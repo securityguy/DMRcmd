@@ -65,7 +65,7 @@ func runProxy(h hotspot.Hotspot) {
 		}
 
 		// Set local flag if applicable
-		if addr == client {
+		if addr.String() == client.String() {
 			dg.local = true
 		}
 
