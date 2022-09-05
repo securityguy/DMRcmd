@@ -13,25 +13,7 @@ import (
 	"dmrcmd/hotspot"
 )
 
-// Structure to hold UDP message metadata and contents
-// This avoids having to pass multiple variables
-type datagram struct {
-	pc     net.PacketConn
-	addr   net.Addr
-	data   bytes.Bytes
-	client bytes.Bytes
-}
-
-func server(id uint32) {
-
-	// Check if hotspot exists
-	if !hotspot.Exists(id) {
-		log.Printf("Unable to start server, %d does not exist", id)
-		return
-	}
-
-	// Get hotspot configuration
-	h := hotspot.Get(id)
+func runServer(h hotspot.Hotspot) {
 
 	// Listen for incoming udp packets
 	pc, err := net.ListenPacket("udp", h.Listen)

@@ -47,8 +47,9 @@ func main() {
 	// Start servers to handle each hotspot
 	list := hotspot.GetList()
 	for _, id := range list {
-		// Start server
-		go server(id)
+
+		// Start server or proxy
+		go startService(id)
 	}
 
 	for {

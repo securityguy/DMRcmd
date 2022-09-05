@@ -21,8 +21,8 @@ type Hotspot struct {
 	Mode          string `json:"mode"`
 	Listen        string `json:"listen"`
 	Server        string `json:"server"`
+	Proxy         bool
 	authenticated bool
-	proxy         bool
 	salt          bytes.Bytes
 	addr          string
 }
@@ -35,9 +35,9 @@ var hotspots = make(map[uint32]Hotspot)
 // and force a re-authentication
 func Add(h Hotspot) {
 	if strings.ToLower(h.Mode) == "proxy" {
-		h.proxy = true
+		h.Proxy = true
 	} else {
-		h.proxy = false
+		h.Proxy = false
 	}
 
 	h.authenticated = false
