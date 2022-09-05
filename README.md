@@ -4,11 +4,12 @@ Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ.
 
 This is early beta software. Please read this file in its entirety and use at your own risk.
 
-This program acts as an amateur radio DMR network server using the Homebrew repeater protocol (MMDVMHost variant) and
-can be configured to execute commands based on the traffic it receives from the user's hotspot.
+This program acts as an amateur radio DMR network server or proxy (see below) using the Homebrew repeater protocol
+(MMDVMHost variant) and can be configured to execute commands based on the traffic it receives from the user's hotspot.
 
-It was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLX).
+In addition to executing command-line functions, CMDcmd also includes a Home Assistant integration.
 
+This software was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLX). 
 Collaboration and pull requests are welcome.
 
 ### Cautions
@@ -117,9 +118,9 @@ care to ensure that you do not inadvertently route traffic intended to trigger D
 ### openSPOT Users
 
 openSPOT does not include multi-DMR server routing capability, so at this point configuring openSPOT to connect to 
-DMRcmd will not allow other traffic to reach a DMR server. I am in the process of adding passthrough capability. 
+DMRcmd will not allow other traffic to reach a DMR server. I am in the process of adding a proxy feature. 
 However, at this time your best bet would be to configure your openSPOT to send traffic to
-DMRGateway (link and configuration above) and configure DMRGateay to send selected traffic to DMRcmd.
+DMRGateway (link and configuration above) and configure DMRGateway to send selected traffic to DMRcmd.
 
 To configure openSPOT to send traffic to DMRcmd:
 
@@ -143,7 +144,7 @@ of the server list, so you are free to uncheck advanced mode.
 Actions can trigger Home Assistant scenes and scripts. The HA section in the configuration file must be enabled
 and you must update the URL and TOKEN for your Home Assistant server. 
 
-While trigger scenes does work, scripts seem to be a more reliable integration point, especially if multiple 
+While triggering scenes does work, scripts seem to be a more reliable integration point, especially if multiple 
 actions or delays are desired.
 
 Note that by default Home Assistant uses HTTP for web console and API access. HTTP is not secure.
