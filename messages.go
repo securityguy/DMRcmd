@@ -129,18 +129,12 @@ func MSTPONG(dg datagram) {
 func DMRD(dg datagram) {
 	d := DMRDParse(dg.data, dg.addr)
 
-	// If proxying, and received from the client, send for event detection
-	if dg.proxy {
-		if dg.local {
-			eventFilter(d)
-		}
-		return
-	}
-
-	// Is this from an authenticated client?
+	// Is this from an authenticated client or are we proxying?
 	if !hotspot.Check(d.client, dg.addr.String()) {
-		log.Printf("Ignoring DMRD from unauthenticated %d @ %s\n", d.client, d.addr.String())
-		return
+		if !dg.proxy {
+			log.Printf("Ignoring DMRD from unauthenticated %d @ %s\n", d.client, d.addr.String())
+			return
+		}
 	}
 
 	if config.Debug {
