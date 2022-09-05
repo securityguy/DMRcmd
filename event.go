@@ -27,22 +27,8 @@ type streamData struct {
 	count     uint32
 }
 
-type dmrData struct {
-	stream    uint32
-	seq       uint32
-	src       uint32
-	dst       uint32
-	client    uint32
-	slot      uint32
-	ip        string
-	group     bool
-	private   bool
-	dataSync  bool
-	voiceSync bool
-}
-
 // Filter to identify new transmissions and fire events
-func eventFilter(d dmrData) {
+func eventFilter(d dmrd) {
 	var s streamData
 	now := time.Now().Unix()
 
@@ -140,7 +126,7 @@ func eventFilter(d dmrData) {
 }
 
 // Perform action
-func eventAction(d dmrData, action configEventAction) {
+func eventAction(d dmrd, action configEventAction) {
 
 	// Is there a command to execute?
 	if action.Run != "" {
@@ -167,7 +153,7 @@ func eventAction(d dmrData, action configEventAction) {
 }
 
 // Execute command
-func eventExecute(d dmrData, action configEventAction) {
+func eventExecute(d dmrd, action configEventAction) {
 
 	// Build argument string starting with command
 	var args []string

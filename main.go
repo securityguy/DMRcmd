@@ -17,25 +17,13 @@
 package main
 
 import (
+	"dmrcmd/hotspot"
 	"log"
-	"net"
 	"os"
-	"time"
-
-	"dmrcmd/bytes"
 )
 
 const ProductName = "dmrcmd"
 const ProductVersion = "0.0.4"
-
-// Structure to hold UDP message metadata and contents
-// This avoids having to pass multiple variables
-type datagram struct {
-	pc     net.PacketConn
-	addr   net.Addr
-	data   bytes.Bytes
-	client bytes.Bytes
-}
 
 func main() {
 
@@ -54,50 +42,14 @@ func main() {
 	}
 	log.Printf("Loaded configuration from %s", configFile)
 
-	// Listen for incoming udp packets
-	pc, err := net.ListenPacket("udp", config.Listen)
-	if err != nil {
-		log.Fatal(err)
+	// Start servers to handle each hotspot
+	list := hotspot.GetList()
+	for _, id := range list {
+		// Start server
+		go server(id)
 	}
-	log.Printf("Listening for packets on %s", config.Listen)
 
-	//noinspection GoUnhandledErrorResult
-	defer pc.Close()
-
-	// Set last purge to current time
-	lastPurge := time.Now().Unix()
-
-	// Loop and receive UDP datagrams
 	for {
+	} // TODO -- add signal handling
 
-		// ReadFrom will respect the length of buf, so we don't need to worry about buffer
-		// overflows. If the packet contains more data than len(buf) it will be truncated.
-		buf := make([]byte, 1024)
-		n, addr, err := pc.ReadFrom(buf)
-		if err != nil {
-			continue
-		}
-
-		// Create and populate structure
-		dg := datagram{
-			pc:     pc,
-			addr:   addr,
-			data:   buf[:n],
-			client: bytes.New(),
-		}
-
-		if config.Debug {
-			log.Printf("Received %d bytes from %s", n, dg.addr.String())
-			dump(dg.data)
-		}
-
-		// Handle the datagram
-		dispatch(dg)
-
-		// Purge old steams from the map every minute
-		now := time.Now().Unix()
-		if now-lastPurge > 60 {
-			eventPurge()
-		}
-	}
 }

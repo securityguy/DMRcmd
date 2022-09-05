@@ -14,6 +14,15 @@ func New() Bytes {
 	return Bytes{}
 }
 
+// Copy returns a deep copy of the data
+func (buf *Bytes) Copy() Bytes {
+	ret := New()
+	for _, b := range *buf {
+		ret = append(ret, b)
+	}
+	return ret
+}
+
 // Get select bytes by location
 func (buf *Bytes) Get(start int, length int) Bytes {
 
@@ -22,11 +31,16 @@ func (buf *Bytes) Get(start int, length int) Bytes {
 		return []byte{}
 	}
 
-	// Dereference
-	tmp := *buf
+	// Extract data we want
+	tmp := New()
+	if length < 1 {
+		tmp = (*buf)[start:]
+	} else {
+		tmp = (*buf)[start : start+length]
+	}
 
-	// Return desired portion
-	return tmp[start : start+length]
+	// Return a deep copy
+	return tmp.Copy()
 }
 
 // GetString gets select bytes by location and return as a string
@@ -51,6 +65,26 @@ func (buf *Bytes) GetUint32(start int, length int) uint32 {
 
 	b := buf.Get(start, length)
 	return b.Uint32()
+}
+
+// Put supplied bytes in location
+func (buf *Bytes) Put(start int, length int, b Bytes) {
+
+	// Check for nil pointer
+	if buf == nil {
+		return
+	}
+
+	// Check for sufficient data
+	if len(b) < length {
+		return
+	}
+
+	for x := 0; x < length; x++ {
+		(*buf)[start+x] = b[x]
+	}
+
+	return
 }
 
 // Append bytes
@@ -78,7 +112,7 @@ func (buf *Bytes) AppendString(s string) {
 	buf.Append([]byte(s))
 }
 
-// AppendUint32 converts uint32 to bytes and appends
+// AppendUint32 converts uint32 to bytes and appends to buf
 func (buf *Bytes) AppendUint32(i uint32) {
 
 	// Check for nil pointer
@@ -95,7 +129,7 @@ func (buf *Bytes) AppendUint32(i uint32) {
 	buf.Append(bytes)
 }
 
-// Uint32 converts bytes to uint32 and appends
+// Uint32 converts bytes to uint32
 func (buf *Bytes) Uint32() uint32 {
 
 	// Check for nil pointer

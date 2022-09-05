@@ -4,6 +4,7 @@
 package main
 
 import (
+	"dmrcmd/hotspot"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,29 +16,11 @@ import (
 
 // Structure to hold configuration information
 type configData struct {
-	Debug   bool           `json:"debug"`
-	Listen  string         `json:"listen"`
-	Minimum uint32         `json:"minimum,omitempty"`
-	HA      ha.Config      `json:"ha,omitempty"`
-	Clients []configClient `json:"clients"`
-	Servers []configServer `json:"servers"`
-	Events  []configEvent  `json:"events"`
-}
-
-type configClient struct {
-	Enabled  bool   `json:"enabled"`
-	Name     string `json:"name"`
-	ID       uint32 `json:"id"`
-	Password string `json:"password"`
-}
-
-type configServer struct {
-	Enabled  bool   `json:"enabled"`
-	Name     string `json:"name"`
-	Host     string `json:"host"`
-	ID       uint32 `json:"id"`
-	Password string `json:"password"`
-	Default  bool   `json:"default"`
+	Debug    bool              `json:"debug"`
+	Minimum  uint32            `json:"minimum,omitempty"`
+	HA       ha.Config         `json:"ha,omitempty"`
+	Hotspots []hotspot.Hotspot `json:"hotspots"`
+	Events   []configEvent     `json:"events"`
 }
 
 type configEvent struct {
@@ -77,23 +60,13 @@ func configure(fileName string) error {
 		return errors.New(tmp)
 	}
 
-	// Iterate through clients and add
-	for _, c := range config.Clients {
-		if c.Enabled {
-			clientAdd(c)
-			log.Printf("Loaded client %s [%d]", c.Name, c.ID)
+	// Iterate through hotspots and add
+	for _, h := range config.Hotspots {
+		if h.Enabled {
+			hotspot.Add(h)
+			log.Printf("Added hotspot %s [%d]", h.Name, h.ID)
 		} else {
-			log.Printf("Ignoring disabled client %s [%d]", c.Name, c.ID)
-		}
-	}
-
-	// Iterate through servers and add
-	for _, s := range config.Servers {
-		if s.Enabled {
-			serverAdd(s)
-			log.Printf("Loaded server %s [%s]", s.Name, s.Host)
-		} else {
-			log.Printf("Ignoring disabled server %s [%s]", s.Name, s.Host)
+			log.Printf("Ignoring disabled hotspot %s [%d]", h.Name, h.ID)
 		}
 	}
 

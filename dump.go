@@ -25,18 +25,15 @@ func dump(data bytes.Bytes) {
 		}
 
 		// Hex portion
-		hex = hex + fmt.Sprintf("%02x", b)
-		if count%4 == 3 {
-			hex = hex + " "
-		}
+		hex = hex + fmt.Sprintf("%02x ", b)
 
 		//fmt.Printf("%d %d %d\n", totalCount, totalCount%4, totalCount%32)
-		if count%32 == 31 {
-			log.Printf("%4d: %-72s | %s", address, hex, text)
+		if count%16 == 15 {
+			log.Printf("%4d: %-47s | %s", address, hex, text)
 			address = count + 1
 			hex = ""
 			text = ""
 		}
 	}
-	log.Printf("%4d: %-72s | %s", address, hex, text)
+	log.Printf("%4d: %-48s | %s", address, hex, text)
 }
