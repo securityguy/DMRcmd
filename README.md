@@ -87,9 +87,8 @@ Pi-Star contains a "DRM Gateway" that is capable of routing DMR traffic to multi
 DMRGateway by Jonathan Naylor (G4KLK) is also available as a stand-alone application from 
 https://github.com/g4klx/DMRGateway.
 
-The most straightforward approach to using this software is to send a range of DMR IDs to
-DMRcmd, while allowing the remainder of your DMR traffic to flow to Brandmeister, DMR+, or other service as usual.
-In that case, do not configure any server objects in the DMRcmd configuration file.
+The most straightforward approach to using DMRcmd is to use DMRGateway to route a range of DMR IDs to
+DMRcmd, while allowing the remainder of your DMR traffic to flow to Brandmeister, DMR+, XLX, and other services as usual.
 
 For example, in the DMRGateway configuration file (Pi-Star users can access it at Configuration -> Expert -> Full Edit: DMR GW):
 
@@ -109,7 +108,7 @@ Using a Private Call is recommended. DMRCmd ignores group calls unless "talkgrou
 set to true in the event configuration, in which case both private and group calls will be
 considered for the event.
 
-The DMR ID and password in the DMR Gateway configuration must match a configuration in DMRcmd
+The DMR ID and password in the DMR Gateway configuration must match a hotspot configuration in DMRcmd
 or authentication will fail and data from your hotspot will be ignored.
 
 **Please be cognizant of the fact that any given DMR ID may be assigned to an individual and use appropriate
@@ -117,10 +116,11 @@ care to ensure that you do not inadvertently route traffic intended to trigger D
 
 ### openSPOT Users
 
-openSPOT does not include multi-DMR server routing capability, so at this point configuring openSPOT to connect to 
-DMRcmd will not allow other traffic to reach a DMR server. I am in the process of adding a proxy feature. 
-However, at this time your best bet would be to configure your openSPOT to send traffic to
-DMRGateway (link and configuration above) and configure DMRGateway to send selected traffic to DMRcmd.
+openSPOT does not include multi-DMR server routing capability. If you wish to use multiple DMR networks, your best bet
+is to connect openSPOT to DMRGateway (link above) and then use the same instructions as provided above to connect
+DMRGateway to DMRcmd.
+
+I am in the process of adding a proxy feature to allow DMRcmd to sit between OpenSPOT and one DMR Network.
 
 To configure openSPOT to send traffic to DMRcmd:
 
