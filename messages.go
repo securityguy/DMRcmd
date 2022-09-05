@@ -132,7 +132,9 @@ func DMRD(dg datagram) {
 	if dg.proxy {
 		// Check if datagram is from a local hotspot
 		if dg.local == false {
-			log.Printf("Ignoring DMRD from non-local source %d @ %s\n", d.client, d.addr.String())
+			if config.Debug {
+				log.Printf("Ignoring DMRD from non-local source %d @ %s\n", d.client, d.addr.String())
+			}
 			return
 		}
 	} else {
