@@ -25,7 +25,7 @@ import (
 )
 
 const ProductName = "dmrcmd"
-const ProductVersion = "0.0.4"
+const ProductVersion = "0.0.5"
 
 func main() {
 

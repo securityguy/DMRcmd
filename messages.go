@@ -13,6 +13,12 @@ import (
 
 // RPTL - Login command is RPTL followed by 4 byte ID
 func RPTL(dg datagram) {
+
+	// If proxying, take no action
+	if dg.proxy {
+		return
+	}
+
 	dg.client = dg.data.Get(4, 4)
 	id := dg.client.Uint32()
 
@@ -45,6 +51,12 @@ func RPTL(dg datagram) {
 
 // RPTK - Authentication
 func RPTK(dg datagram) {
+
+	// If proxying, take no action
+	if dg.proxy {
+		return
+	}
+
 	dg.client = dg.data.Get(4, 4)
 	id := dg.client.Uint32()
 	authBytes := dg.data.Get(8, 32)
@@ -67,6 +79,12 @@ func RPTK(dg datagram) {
 
 // RPTC - Configuration message
 func RPTC(dg datagram) {
+
+	// If proxying, take no action
+	if dg.proxy {
+		return
+	}
+
 	dg.client = dg.data.Get(4, 4)
 	id := dg.client.Uint32()
 	log.Printf("Configuration from %d @ %s\n", id, dg.addr.String())
@@ -84,7 +102,12 @@ func RPTC(dg datagram) {
 func RPTPING(dg datagram) {
 	dg.client = dg.data.Get(7, 4)
 	id := dg.client.Uint32()
-	log.Printf("Ping from %d @ %s\n", id, dg.addr.String())
+	log.Printf("Ping from %d at %s\n", id, dg.addr.String())
+
+	// If proxying, take no further action
+	if dg.proxy {
+		return
+	}
 
 	// If client is authenticated, reply
 	if hotspot.Check(id, dg.addr.String()) {
@@ -95,9 +118,24 @@ func RPTPING(dg datagram) {
 	}
 }
 
+// MSTPONG - Pong
+func MSTPONG(dg datagram) {
+	dg.client = dg.data.Get(7, 4)
+	id := dg.client.Uint32()
+	log.Printf("Pong to %d from %s\n", id, dg.addr.String())
+}
+
 // DMRD - DMR Data
 func DMRD(dg datagram) {
 	d := DMRDParse(dg.data, dg.addr)
+
+	// If proxying, and received from the client, send for event detection
+	if dg.proxy {
+		if dg.local {
+			eventFilter(d)
+		}
+		return
+	}
 
 	// Is this from an authenticated client?
 	if !hotspot.Check(d.client, dg.addr.String()) {
@@ -121,10 +159,9 @@ func DMRA(dg datagram) {
 	alias := dg.data.GetString(13, 6)
 
 	// Is this from an authenticated client?
-	if !hotspot.Check(id, dg.addr.String()) {
+	if hotspot.Check(id, dg.addr.String()) || dg.proxy {
+		log.Printf("DMRA radio %d alias %s from %d @ %s\n", radio, alias, id, dg.addr.String())
+	} else {
 		log.Printf("Igoring DMRA from unauthenticated %d @ %s\n", id, dg.addr.String())
-		return
 	}
-
-	log.Printf("DMRA radio %d alias %s from %d @ %s\n", radio, alias, id, dg.addr.String())
 }

@@ -14,10 +14,13 @@ import (
 // Structure to hold UDP message metadata and contents
 // This avoids having to pass multiple variables
 type datagram struct {
-	pc     net.PacketConn
-	addr   net.Addr
-	data   bytes.Bytes
-	client bytes.Bytes
+	pc     net.PacketConn // connection
+	addr   net.Addr       // source address
+	data   bytes.Bytes    // data
+	client bytes.Bytes    // TODO is this still required?
+	proxy  bool           // proxy mode flag
+	local  bool           // datagram is from local hotspot (proxy mode only)
+	drop   bool           // drop packet flag (proxy mode only)
 }
 
 func startService(id uint32) {

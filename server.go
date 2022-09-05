@@ -20,7 +20,7 @@ func runServer(h hotspot.Hotspot) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Listening for packets on %s for hotspot %s [%d]", h.Listen, h.Name, h.ID)
+	log.Printf("Server listening for packets on %s for hotspot %s [%d]", h.Listen, h.Name, h.ID)
 
 	//noinspection GoUnhandledErrorResult
 	defer pc.Close()
@@ -44,6 +44,9 @@ func runServer(h hotspot.Hotspot) {
 			addr:   addr,
 			data:   buf[:n],
 			client: bytes.New(),
+			proxy:  false,
+			local:  false,
+			drop:   false,
 		}
 
 		if config.Debug {
@@ -51,7 +54,7 @@ func runServer(h hotspot.Hotspot) {
 			dump(dg.data)
 		}
 
-		// Handle the datagram
+		// Process the datagram
 		dispatch(dg)
 
 		// Get current time

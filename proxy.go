@@ -16,12 +16,16 @@ import (
 // TODO -- turn this into a proxy instead of a server
 func runProxy(h hotspot.Hotspot) {
 
+	// Destination for packet forwarding
+	var dest net.Addr = nil
+	var client net.Addr = nil
+
 	// Listen for incoming udp packets
 	pc, err := net.ListenPacket("udp", h.Listen)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Listening for packets on %s for hotspot %s [%d]", h.Listen, h.Name, h.ID)
+	log.Printf("Proxying packets for %s to %s for hotspot %s [%d]", h.Listen, h.Server, h.Name, h.ID)
 
 	//noinspection GoUnhandledErrorResult
 	defer pc.Close()
@@ -31,6 +35,7 @@ func runProxy(h hotspot.Hotspot) {
 
 	// Loop and receive UDP datagrams
 	for {
+
 		// ReadFrom will respect the length of buf, so we don't need to worry about buffer
 		// overflows. If the packet contains more data than len(buf) it will be truncated.
 		buf := make([]byte, 1024)
@@ -39,12 +44,29 @@ func runProxy(h hotspot.Hotspot) {
 			continue
 		}
 
+		// We don't know what port the client will use, so we need to keep track of it
+		if client == nil {
+			// Make sure this isn't from the server
+			if addr.String() != h.Server {
+				client = addr
+				log.Printf("Client address set to %s for hotspot %s [%d]", client.String(), h.Name, h.ID)
+			}
+		}
+
 		// Create and populate structure
 		dg := datagram{
 			pc:     pc,
 			addr:   addr,
 			data:   buf[:n],
 			client: bytes.New(),
+			proxy:  true,
+			local:  false,
+			drop:   false,
+		}
+
+		// Set local flag if applicable
+		if addr == client {
+			dg.local = true
 		}
 
 		if config.Debug {
@@ -52,8 +74,30 @@ func runProxy(h hotspot.Hotspot) {
 			dump(dg.data)
 		}
 
-		// Handle the datagram
+		// Process the datagram
 		dispatch(dg)
+
+		// Determine destination
+		if addr.String() == h.Server {
+			dest = client
+		} else {
+			dest, err = net.ResolveUDPAddr("udp", h.Server)
+			if err != nil {
+				log.Printf("Error parsing server address")
+				break
+			}
+		}
+
+		// Send the datagram
+		n, err = pc.WriteTo(dg.data, dest)
+		if err != nil {
+			log.Printf("SEND ERROR!")
+			continue
+		}
+
+		if config.Debug {
+			log.Printf("Sent %d bytes to %s", n, dest.String())
+		}
 
 		// Get current time
 		now := time.Now().Unix()

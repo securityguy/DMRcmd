@@ -4,12 +4,12 @@ Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ.
 
 This is early beta software. Please read this file in its entirety and use at your own risk.
 
-This program acts as an amateur radio DMR network server or proxy (see below) using the Homebrew repeater protocol
-(MMDVMHost variant) and can be configured to execute commands based on the traffic it receives from the user's hotspot.
+This program acts as an amateur radio DMR network server or proxy using the Homebrew MMDVMHost protocol
+and can be configured to execute commands based on the DMR traffic it receives from a hotspot.
 
-In addition to executing command-line functions, CMDcmd also includes a Home Assistant integration.
+In addition to executing command-line functions, DMRcmd also includes a Home Assistant integration.
 
-This software was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLX). 
+This software was inspired by PiStar-Remote by Andy Taylor (MW0MWZ) and DMRGateway by Jonathan Naylor (G4KLX).
 Collaboration and pull requests are welcome.
 
 ### Cautions
@@ -22,17 +22,17 @@ do anything. The user is solely responsible for whatever they configure it to do
 The Homebrew repeater protocol used by this application is not fully documented and as a result this implementation
 from scratch may contain errors.
 
-DMRcmd is intended for use on a private secure network. While it ignores traffic from unauthenticated sources, 
+DMRcmd is intended for use on a private secure network. While it ignores traffic from unauthenticated sources,
 DMR data packets are sent in unauthenticated UDP datagrams, making it easy to forge datagrams and trigger events.
 
-The DMR protocol is not secure and this application can be configured to execute the system commands specified in the 
-configuration file. Anyone with a suitable receiver can monitor DMR traffic, view the source and destination IDs, 
+The DMR protocol is not secure and this application can be configured to execute the system commands specified in the
+configuration file. Anyone with a suitable receiver can monitor DMR traffic, view the source and destination IDs,
 and program a radio to duplicate the traffic.
 
 It is up to each user to determine the suitability of this software for their specific application and to accept
 full responsibility for the outcome.
 
-This software is intended for amateur radio and educational purposes only. 
+This software is intended for amateur radio and educational purposes only.
 
 ### Compiling
 
@@ -46,28 +46,29 @@ This software should compile and run on various flavours of Linux, Windows, and 
 If you encounter any errors please create an issue in GitHub.
 
 Notes:
- - Once compiled, the binary and configuration file can simply be copied to another computer.
- - Go is only required to compile the software. It is not required to run the compiled program.
- - Windows users should consider installing Git from https://git-scm.com/.
- 
+
+- Once compiled, the binary and configuration file can simply be copied to another computer.
+- Go is only required to compile the software. It is not required to run the compiled program.
+- Windows users should consider installing Git from https://git-scm.com/.
+
 ### Configuration
 
-By default, configuration information is read from dmrcmd.json in the working directory. 
-The full path to the configuration file can optionally be passed as the first (and only) 
+By default, configuration information is read from dmrcmd.json in the working directory.
+The full path to the configuration file can optionally be passed as the first (and only)
 command line argument.
 
 Note that most configuration objects have an "enabled" option. Unless it is set to true, the
 object will be ignored.
 
-Additional configuration documentation will be added at a later date. In the interim, 
+Additional configuration documentation will be added at a later date. In the interim,
 please refer to dmrcmd.example.json.
 
-For security reasons, this program neither searches the execution path nor uses a shell to 
+For security reasons, this program neither searches the execution path nor uses a shell to
 execute commands. The full path to a program or script to be executed must be provided
 in the configuration file.
 
 For similar reasons, command line arguments to be passed to the program or script must be specified as
-a list. Note that information from the DMR transmission (source ID, destination ID, client (repeater) ID, 
+a list. Note that information from the DMR transmission (source ID, destination ID, client (repeater) ID,
 and IP address) can be substituted for command line arguments using $src, $dst, $ip, and $client respectively.
 
 Within each event definition, **all specified conditions** must be met for the event to execute.
@@ -75,7 +76,7 @@ Within each event definition, **all specified conditions** must be met for the e
 By design, a single DMR transmission may result in multiple events executing.
 
 In order to avoid accidentally triggering events, a minimum number of DMR messages can be required.
-The default threshold of 18 requires the transmission to last for approximately one second 
+The default threshold of 18 requires the transmission to last for approximately one second
 before triggering an event. Testing revealed that even a quick press and release of the PTT
 sends upwards of 16 data packets, so lowering the value below 18 will likely result
 in the event triggering if the PTT is bumped. If this is not a concern, the "minimum" value in the
@@ -83,19 +84,21 @@ configuration file can be changed to 1.
 
 ### Pi-Star and DRMGateway Users
 
-Pi-Star contains a "DRM Gateway" that is capable of routing DMR traffic to multiple servers. 
-DMRGateway by Jonathan Naylor (G4KLK) is also available as a stand-alone application from 
+Pi-Star contains a "DMR Gateway" that is capable of routing DMR traffic to multiple servers.
+DMRGateway by Jonathan Naylor (G4KLK) is also available as a stand-alone application from
 https://github.com/g4klx/DMRGateway.
 
 The most straightforward approach to using DMRcmd is to use DMRGateway to route a range of DMR IDs to
-DMRcmd, while allowing the remainder of your DMR traffic to flow to Brandmeister, DMR+, XLX, and other services as usual.
+DMRcmd, while allowing the remainder of your DMR traffic to flow to Brandmeister, DMR+, XLX, and other services as
+usual.
 
-For example, in the DMRGateway configuration file (Pi-Star users can access it at Configuration -> Expert -> Full Edit: DMR GW):
+For example, in the DMRGateway configuration file (Pi-Star users can access it at Configuration -> Expert -> Full Edit:
+DMR GW):
 
     [DMR Network 2]
      Enabled=1
      Address=<IP where DMRcmd can be reached>
-     Port=55555
+     Port=<PORT specified in the DMRcmd configuration file>
      PCRewrite=2,8999900,2,8999900,100
      TGRewrite=2,8999900,2,8999900,100
      Password=<PASSWORD>
@@ -120,7 +123,9 @@ openSPOT does not include multi-DMR server routing capability. If you wish to us
 is to connect openSPOT to DMRGateway (link above) and then use the same instructions as provided above to connect
 DMRGateway to DMRcmd.
 
-I am in the process of adding a proxy feature to allow DMRcmd to sit between OpenSPOT and one DMR Network.
+DMRcmd has a proxy option, in which case instead of acting as a DMR network server, it will proxy data
+to and from the server specified in the configuration file. This allows DMRcmd to sit between OpenSPOT
+and one DMR Network, and monitor the traffic for DMR calls of interest.
 
 To configure openSPOT to send traffic to DMRcmd:
 
@@ -136,15 +141,16 @@ To configure openSPOT to send traffic to DMRcmd:
 
 Note that the "Homebrew" protocol is not supported. You must use "MMDVM" mode.
 
-Also note that the procedure above adds the IP address and port you have specified to the "Custom servers" section
-of the server list, so you are free to uncheck advanced mode.
+If DMRcmd is configured in proxy mode, it will proxy the server authentication as well. As a result, you must
+configure OpenSPOT with the DMR ID and password that the DMR network (such as BrandMeister) expects. In proxy mode,
+DMRcmd will *not* authenticate the hotspot or verify the credentials.
 
 ### Home Assistant Integration
 
 Actions can trigger Home Assistant scenes and scripts. The HA section in the configuration file must be enabled
-and you must update the URL and TOKEN for your Home Assistant server. 
+and you must update the URL and TOKEN for your Home Assistant server.
 
-While triggering scenes does work, scripts seem to be a more reliable integration point, especially if multiple 
+While triggering scenes does work, scripts seem to be a more reliable integration point, especially if multiple
 actions or delays are desired.
 
 Note that by default Home Assistant uses HTTP for web console and API access. HTTP is not secure.
@@ -162,6 +168,6 @@ the implied warranties of merchantability and fitness for a particular purpose.
 
 It is your responsibility to ensure that this program it not used in any way that places persons or
 property at any risk.
- 
+
 If you do not agree to the licence and these terms, you are prohibited from using this software
 or any part thereof.

@@ -18,11 +18,15 @@ func dispatch(dg datagram) {
 		RPTC(dg)
 	} else if dg.data.MatchStartString("RPTPING") {
 		RPTPING(dg)
+	} else if dg.data.MatchStartString("MSTPONG") {
+		MSTPONG(dg)
 	} else if dg.data.MatchStartString("DMRD") {
 		DMRD(dg)
 	} else if dg.data.MatchStartString("DMRA") {
 		DMRA(dg)
 	} else {
-		log.Printf("Unknown packet type from %s", dg.addr.String())
+		if !dg.proxy {
+			log.Printf("Unknown packet type from %s", dg.addr.String())
+		}
 	}
 }
