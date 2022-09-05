@@ -3,17 +3,17 @@
   "minimum": 18,
   "hotspots": [
     {
+      "name": "OpenSPOT",
       "enabled": false,
       "mode": "proxy",
-      "name": "OpenSPOT",
       "listen": ":55555",
       "id": 123456701,
       "server": "IP:PORT"
     },
     {
+      "name": "Pi-Star",
       "enabled": false,
       "mode": "server",
-      "name": "Pi-Star",
       "listen": ":55556",
       "id": 123456702,
       "password": "PASSWORD"
@@ -29,7 +29,7 @@
       "enabled": false,
       "name": "test1",
       "src": 1234567,
-      "dst": 9999990,
+      "dst": 8999990,
       "client": 123456701,
       "talkgroup": false,
       "action": {
@@ -43,6 +43,7 @@
       "enabled": false,
       "name": "test2",
       "src": 1234567,
+      "dst": 8999991,
       "action": {
         "run": "/tmp/test.sh",
         "args": [
@@ -57,6 +58,8 @@
       "enabled": false,
       "name": "test3",
       "ip": "192.168.0.42",
+      "src": 1234567,
+      "dst": 8999993,
       "talkgroup": true,
       "action": {
         "run": "/usr/bin/touch",
@@ -69,7 +72,7 @@
       "enabled": false,
       "name": "test4",
       "src": 1234567,
-      "dst": 9999994,
+      "dst": 8999994,
       "action": {
         "ha_script": "flash_lights"
       }
@@ -78,7 +81,7 @@
       "enabled": false,
       "name": "test5",
       "src": 1234567,
-      "dst": 9999995,
+      "dst": 8999995,
       "talkgroup": true,
       "action": {
         "ha_scene": "lights_off"

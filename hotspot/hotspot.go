@@ -1,6 +1,7 @@
 /*
-	Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
+Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
 */
+
 package hotspot
 
 import (
@@ -66,7 +67,7 @@ func GetList() []uint32 {
 	var list []uint32
 
 	// Iterate over hotspots and build list
-	for i, _ := range hotspots {
+	for i := range hotspots {
 		list = append(list, i)
 	}
 

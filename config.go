@@ -1,6 +1,7 @@
 /*
-	Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
+Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
 */
+
 package main
 
 import (
@@ -8,8 +9,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
 	"dmrcmd/ha"
 )
@@ -48,7 +49,7 @@ var config configData
 func configure(fileName string) error {
 
 	// Load from json file
-	file, err := ioutil.ReadFile(fileName)
+	file, err := os.ReadFile(fileName)
 	if err != nil {
 		return err
 	}

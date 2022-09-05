@@ -1,6 +1,7 @@
 /*
-	Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
+Copyright (c) 2020-2022 by Eric Jacksch VE3XEJ
 */
+
 package main
 
 import (
@@ -28,7 +29,7 @@ type streamData struct {
 }
 
 // Filter to identify new transmissions and fire events
-func eventFilter(d dmrd) {
+func eventFilter(d DMRData) {
 	var s streamData
 	now := time.Now().Unix()
 
@@ -126,7 +127,7 @@ func eventFilter(d dmrd) {
 }
 
 // Perform action
-func eventAction(d dmrd, action configEventAction) {
+func eventAction(d DMRData, action configEventAction) {
 
 	// Is there a command to execute?
 	if action.Run != "" {
@@ -153,7 +154,7 @@ func eventAction(d dmrd, action configEventAction) {
 }
 
 // Execute command
-func eventExecute(d dmrd, action configEventAction) {
+func eventExecute(d DMRData, action configEventAction) {
 
 	// Build argument string starting with command
 	var args []string
