@@ -5,9 +5,10 @@
 package main
 
 import (
-	"dmrcmd/bytes"
 	"fmt"
 	"log"
+
+	"dmrcmd/bytes"
 )
 
 func dump(data bytes.Bytes) {
