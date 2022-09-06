@@ -22,7 +22,7 @@ func dmrServer(h hotspot.Hotspot) {
 		log.Fatal(err)
 	}
 
-	log.Printf("Server listening for packets on %s for hotspot %s [%d]", h.Listen, h.Name, h.ID)
+	log.Printf("Server listening on %s for hotspot %s [%d]", h.Listen, h.Name, h.ID)
 
 	//noinspection GoUnhandledErrorResult
 	defer pc.Close()

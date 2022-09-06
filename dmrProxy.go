@@ -26,7 +26,7 @@ func dmrProxy(h hotspot.Hotspot) {
 		log.Fatal(err)
 	}
 
-	log.Printf("Proxy listening for packets on %s for hotspot %s [%d] and forwarding to %s",
+	log.Printf("Proxy listening on %s for hotspot %s [%d] and forwarding to %s",
 		h.Listen, h.Name, h.ID, h.Server)
 
 	//noinspection GoUnhandledErrorResult
