@@ -28,7 +28,7 @@ func dump(data bytes.Bytes) {
 		// Hex portion
 		hex = hex + fmt.Sprintf("%02x ", b)
 
-		//fmt.Printf("%d %d %d\n", totalCount, totalCount%4, totalCount%32)
+		// Combine at the right time
 		if count%16 == 15 {
 			log.Printf("%4d: %-47s | %s", address, hex, text)
 			address = count + 1

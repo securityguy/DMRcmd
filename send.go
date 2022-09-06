@@ -10,30 +10,30 @@ import (
 	"dmrcmd/bytes"
 )
 
-// Send NAC to client (MSTNAK + id)
+// Send NAC to hotspot (MSTNAK + id)
 func sendNAK(dg *datagram) {
-	log.Printf("Sending RPTNAK to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
+	log.Printf("Sending RPTNAK to %d @ %s\n", dg.hotspot.Uint32(), dg.addr.String())
 	reply := bytes.New()
 	reply.AppendString("MSTNAK")
-	reply.Append(dg.client)
+	reply.Append(dg.hotspot)
 	sendUDP(dg, reply)
 }
 
-// Send ACK to client (RPTACK + id)
+// Send ACK to hotspot (RPTACK + id)
 func sendACK(dg *datagram) {
-	log.Printf("Sending RPTACK to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
+	log.Printf("Sending RPTACK to %d @ %s\n", dg.hotspot.Uint32(), dg.addr.String())
 	reply := bytes.New()
 	reply.AppendString("RPTACK")
-	reply.Append(dg.client)
+	reply.Append(dg.hotspot)
 	sendUDP(dg, reply)
 }
 
-// Send ping reply (pong) to client
+// Send ping reply (pong) to hotspot
 func sendPONG(dg *datagram) {
-	log.Printf("Pong to %d @ %s\n", dg.client.Uint32(), dg.addr.String())
+	log.Printf("Pong to %d @ %s\n", dg.hotspot.Uint32(), dg.addr.String())
 	reply := bytes.New()
 	reply.AppendString("MSTPONG")
-	reply.Append(dg.client)
+	reply.Append(dg.hotspot)
 	sendUDP(dg, reply)
 }
 

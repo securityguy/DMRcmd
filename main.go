@@ -25,7 +25,7 @@ import (
 )
 
 const ProductName = "dmrcmd"
-const ProductVersion = "0.0.6"
+const ProductVersion = "0.0.7"
 
 func main() {
 
@@ -49,7 +49,7 @@ func main() {
 	for _, id := range list {
 
 		// Start server or proxy
-		go startService(id)
+		go startServer(id)
 	}
 
 	for {

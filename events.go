@@ -28,7 +28,7 @@ type streamData struct {
 	count     uint32
 }
 
-// Filter to identify new transmissions and fire events
+// Filter to identify new transmissions and trigger events
 func eventFilter(d DMRData) {
 	var s streamData
 	now := time.Now().Unix()
@@ -104,7 +104,7 @@ func eventFilter(d DMRData) {
 
 		// Match src if specified
 		if c.Client > 0 {
-			if c.Client != d.client {
+			if c.Client != d.hotspot {
 				continue
 			}
 		}
@@ -117,8 +117,8 @@ func eventFilter(d DMRData) {
 		}
 
 		// All criteria met, perform action
-		log.Printf("Triggered event %s from=%d to=%d client=%d private=%v group=%v ip=%s action: %s",
-			c.Name, d.src, d.dst, d.client, d.private, d.group, d.ip, actionToString(c.Action))
+		log.Printf("Triggered event %s from=%d to=%d hotspot=%d private=%v group=%v ip=%s action: %s",
+			c.Name, d.src, d.dst, d.hotspot, d.private, d.group, d.ip, actionToString(c.Action))
 		eventAction(d, c.Action)
 	}
 
@@ -173,7 +173,7 @@ func eventExecute(d DMRData, action configEventAction) {
 		case "$dst":
 			arg = fmt.Sprint(d.dst)
 		case "$client":
-			arg = fmt.Sprint(d.client)
+			arg = fmt.Sprint(d.hotspot)
 		case "$ip":
 			arg = d.ip
 		default:

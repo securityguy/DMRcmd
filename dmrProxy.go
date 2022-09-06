@@ -13,8 +13,8 @@ import (
 	"dmrcmd/hotspot"
 )
 
-// TODO -- turn this into a proxy instead of a server
-func runProxy(h hotspot.Hotspot) {
+// dmrProxy sits between a hotspot and a DMR server
+func dmrProxy(h hotspot.Hotspot) {
 
 	// Destination for packet forwarding
 	var dest net.Addr = nil
@@ -44,7 +44,7 @@ func runProxy(h hotspot.Hotspot) {
 			continue
 		}
 
-		// We don't know what port the client will use, so we need to keep track of it
+		// We don't know what port the hotspot will use, so we need to keep track of it
 		if client == nil {
 			// Make sure this isn't from the server
 			if addr.String() != h.Server {
@@ -55,13 +55,13 @@ func runProxy(h hotspot.Hotspot) {
 
 		// Create and populate structure
 		dg := datagram{
-			pc:     pc,
-			addr:   addr,
-			data:   buf[:n],
-			client: bytes.New(),
-			proxy:  true,
-			local:  false,
-			drop:   false,
+			pc:      pc,
+			addr:    addr,
+			data:    buf[:n],
+			hotspot: bytes.New(),
+			proxy:   true,
+			local:   false,
+			drop:    false,
 		}
 
 		// Set local flag if applicable
@@ -75,7 +75,7 @@ func runProxy(h hotspot.Hotspot) {
 		}
 
 		// Process the datagram
-		dispatch(&dg)
+		dispatchMsg(&dg)
 
 		if dg.drop {
 			if config.Debug {

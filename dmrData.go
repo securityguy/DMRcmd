@@ -17,7 +17,7 @@ type DMRData struct {
 	seq       uint32
 	src       uint32
 	dst       uint32
-	client    uint32
+	hotspot   uint32
 	slot      uint32
 	group     bool
 	private   bool
@@ -36,7 +36,7 @@ func DMRDParse(b bytes.Bytes, addr net.Addr) DMRData {
 	d.seq = b.GetUint32(4, 1)
 	d.src = b.GetUint32(5, 3)
 	d.dst = b.GetUint32(8, 3)
-	d.client = b.GetUint32(11, 4)
+	d.hotspot = b.GetUint32(11, 4)
 	bitmap := b.GetUint32(15, 1)
 	d.stream = b.GetUint32(16, 4)
 	d.data = b.Get(20, 0)
@@ -76,8 +76,8 @@ func DMRDParse(b bytes.Bytes, addr net.Addr) DMRData {
 }
 
 func DMRDSummary(c string, d DMRData) {
-	log.Printf("%s DMRD seq=%d src=%d dst=%d slot=%v TG=%v PC=%v stream=%d client=%d @ %s\n",
-		c, d.seq, d.src, d.dst, d.slot, d.group, d.private, d.stream, d.client, d.addr.String())
+	log.Printf("%s DMRD seq=%d src=%d dst=%d slot=%v TG=%v PC=%v stream=%d hotspot=%d @ %s\n",
+		c, d.seq, d.src, d.dst, d.slot, d.group, d.private, d.stream, d.hotspot, d.addr.String())
 }
 
 func DMRDDump(c string, d DMRData) {

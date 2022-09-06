@@ -29,7 +29,7 @@ type configEvent struct {
 	Name      string            `json:"name,omitempty"`
 	SRC       uint32            `json:"src,omitempty"`
 	DST       uint32            `json:"dst,omitempty"`
-	Client    uint32            `json:"client,omitempty"`
+	Client    uint32            `json:"hotspot,omitempty"`
 	IP        string            `json:"ip,omitempty"`
 	TalkGroup bool              `json:"talkgroup,omitempty"`
 	Action    configEventAction `json:"action,omitempty"`
@@ -77,7 +77,7 @@ func configure(fileName string) error {
 	// Iterate through events and log
 	for _, e := range config.Events {
 		if e.Enabled {
-			log.Printf("Loaded event %s src %d dst %d client %d talkgroup %v ip %s action %s",
+			log.Printf("Loaded event %s src %d dst %d hotspot %d talkgroup %v ip %s action %s",
 				e.Name, e.SRC, e.DST, e.Client, e.TalkGroup, e.IP, actionToString(e.Action))
 		} else {
 			if config.Debug {

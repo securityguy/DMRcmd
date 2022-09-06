@@ -7,62 +7,38 @@ package main
 import (
 	"log"
 	"net"
-	"time"
 
 	"dmrcmd/bytes"
 	"dmrcmd/hotspot"
 )
 
-func runServer(h hotspot.Hotspot) {
+// Structure to hold UDP message metadata and contents
+// This avoids having to pass multiple variables
+type datagram struct {
+	pc      net.PacketConn // connection
+	addr    net.Addr       // source address
+	data    bytes.Bytes    // data
+	hotspot bytes.Bytes    // hotspot ID
+	proxy   bool           // proxy mode flag
+	local   bool           // datagram is from local hotspot (proxy mode only)
+	drop    bool           // drop packet flag (proxy mode only)
+}
 
-	// Listen for incoming udp packets
-	pc, err := net.ListenPacket("udp", h.Listen)
-	if err != nil {
-		log.Fatal(err)
+func startServer(id uint32) {
+
+	// CheckAuthenticated that hotspot entry exists
+	if !hotspot.Exists(id) {
+		log.Printf("Unable to start server, %d does not exist", id)
+		return
 	}
-	log.Printf("Server listening for packets on %s for hotspot %s [%d]", h.Listen, h.Name, h.ID)
 
-	//noinspection GoUnhandledErrorResult
-	defer pc.Close()
+	// Get hotspot configuration
+	h := hotspot.Get(id)
 
-	// Set last purge to current time
-	lastPurge := time.Now().Unix()
-
-	// Loop and receive UDP datagrams
-	for {
-		// ReadFrom will respect the length of buf, so we don't need to worry about buffer
-		// overflows. If the packet contains more data than len(buf) it will be truncated.
-		buf := make([]byte, 1024)
-		n, addr, err := pc.ReadFrom(buf)
-		if err != nil {
-			continue
-		}
-
-		// Create and populate structure
-		dg := datagram{
-			pc:     pc,
-			addr:   addr,
-			data:   buf[:n],
-			client: bytes.New(),
-			proxy:  false,
-			local:  false,
-			drop:   false,
-		}
-
-		if config.Debug {
-			log.Printf("Received %d bytes from %s", n, dg.addr.String())
-			dump(dg.data)
-		}
-
-		// Process the datagram
-		dispatch(&dg)
-
-		// Get current time
-		now := time.Now().Unix()
-
-		// Purge old steams from the map every minute
-		if now-lastPurge > 60 {
-			eventPurge()
-		}
+	// Start server or proxy
+	if h.Proxy {
+		dmrProxy(h)
+	} else {
+		dmrServer(h)
 	}
 }
