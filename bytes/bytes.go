@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 )
 
+// Bytes is just an array of bytes to allow cleaner code
 type Bytes []byte
 
 // New is a convenience function to create an array of bytes
