@@ -152,12 +152,12 @@ DMR IDs listed in the "drop" section will be dropped by the proxy in both direct
 ### Home Assistant Integration
 
 Actions can trigger Home Assistant (HA) scenes and scripts. The HA section in the configuration file must be enabled
-and you must update the URL and TOKEN for your Home Assistant server.
+and you must update the URL and TOKEN for your HA server.
 
 While triggering scenes does work, scripts seem to be a more reliable integration point, especially if multiple
 actions or delays are desired.
 
-Note that by default Home Assistant uses HTTP for web console and API access. HTTP is not secure and the HA API should
+Note that by default HA uses HTTP for web console and API access. HTTP is not secure and the HA API should
 therefore not be exposed to the Internet or any other untrusted network.
 
 ### License, Additional Terms, and Disclaimers
