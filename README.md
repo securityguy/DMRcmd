@@ -165,7 +165,7 @@ therefore not be exposed to the Internet or any other untrusted network.
 This software is licensed under GPL v3 and is intended for amateur radio and educational use only.
 Please see the included LICENSE file.
 
-If GPL presents any issues or concerns please contact the author to discuss alternative arrangements.
+If GPL presents any issues or concerns, please contact the author to discuss alternative arrangements.
 
 By using this software you assume all risks whatsoever. This software is provided "as is"
 without any warranty of any kind, either expressed or implied, including, but not limited to,
