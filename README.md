@@ -107,7 +107,7 @@ DMR GW):
      Name=DMRcmd
 
 This example will send any private or group calls in the 8999900 - 8999999 range to DMRcmd.
-Using a Private Call is recommended. DMRCmd ignores group calls unless "talkgroup" is
+Using a Private Call is recommended. DMRcmd ignores group calls unless "talkgroup" is
 set to true in the event configuration, in which case both private and group calls will be
 considered for the event.
 
@@ -115,7 +115,7 @@ The DMR ID and password in the DMR Gateway configuration must match a hotspot co
 or authentication will fail and data from your hotspot will be ignored.
 
 **Please be cognizant of the fact that any given DMR ID may be assigned to an individual and use appropriate
-care to ensure that you do not inadvertently route traffic intended to trigger DMRCmd events to a DMR network.**
+care to ensure that you do not inadvertently route traffic intended to trigger DMRcmd events to a DMR network.**
 
 ### openSPOT Users
 
