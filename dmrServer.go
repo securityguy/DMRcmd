@@ -13,7 +13,7 @@ import (
 	"dmrcmd/hotspot"
 )
 
-// dmrServer acts as a DMR server, allowing a hotspot to connect and send data
+// dmrServer acts as a DMR server, allowing a repeater to connect and send data
 func dmrServer(h hotspot.Hotspot) {
 
 	// Listen for incoming udp packets
@@ -22,7 +22,7 @@ func dmrServer(h hotspot.Hotspot) {
 		log.Fatal(err)
 	}
 
-	log.Printf("Server listening on %s for hotspot %s [%d]", h.Listen, h.Name, h.ID)
+	log.Printf("Server listening on %s for repeater %s [%d]", h.Listen, h.Name, h.ID)
 
 	//noinspection GoUnhandledErrorResult
 	defer pc.Close()

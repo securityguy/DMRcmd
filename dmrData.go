@@ -13,20 +13,23 @@ import (
 )
 
 type DMRData struct {
-	stream    uint32
-	seq       uint32
-	src       uint32
-	dst       uint32
-	hotspot   uint32
-	slot      uint32
-	group     bool
-	private   bool
-	dataSync  bool
-	voiceSync bool
-	data      bytes.Bytes
-	addr      net.Addr
-	ip        string
-	original  bytes.Bytes
+	stream     uint32
+	seq        uint32
+	src        uint32
+	dst        uint32
+	repeater   uint32
+	bitmap     uint32
+	slot       uint32
+	group      bool
+	private    bool
+	frameType  uint32
+	frameVoice bool
+	frameData  bool
+	dataType   uint32
+	data       bytes.Bytes
+	addr       net.Addr
+	ip         string
+	original   bytes.Bytes
 }
 
 func DMRDParse(b bytes.Bytes, addr net.Addr) DMRData {
@@ -36,21 +39,21 @@ func DMRDParse(b bytes.Bytes, addr net.Addr) DMRData {
 	d.seq = b.GetUint32(4, 1)
 	d.src = b.GetUint32(5, 3)
 	d.dst = b.GetUint32(8, 3)
-	d.hotspot = b.GetUint32(11, 4)
-	bitmap := b.GetUint32(15, 1)
+	d.repeater = b.GetUint32(11, 4)
+	d.bitmap = b.GetUint32(15, 1)
 	d.stream = b.GetUint32(16, 4)
 	d.data = b.Get(20, 0)
 	d.original = b.Copy()
 
 	// Get slot
-	if bitmap&0x80 == 0x80 {
+	if d.bitmap&0x80 == 0x80 {
 		d.slot = 2
 	} else {
 		d.slot = 1
 	}
 
-	// Private Call (PC) vs Talkgroup (TG)
-	if bitmap&0x40 == 0x40 {
+	// Call type - Private Call (PC) vs Talkgroup (TG)
+	if d.bitmap&0x40 == 0x40 {
 		d.group = false
 		d.private = true
 	} else {
@@ -58,26 +61,31 @@ func DMRDParse(b bytes.Bytes, addr net.Addr) DMRData {
 		d.private = false
 	}
 
-	// Data Sync
-	if bitmap&0x20 == 0x20 {
-		d.dataSync = true
+	// Frame Type
+	d.frameType = (d.bitmap & 0x30) >> 4
+	if d.frameType&0b10 == 0b10 {
+		d.frameData = true
+		d.frameVoice = false
 	} else {
-		d.dataSync = false
+		d.frameData = false
+		d.frameVoice = true
 	}
 
-	// Voice Sync
-	if bitmap&0x10 == 0x10 {
-		d.voiceSync = true
-	} else {
-		d.voiceSync = false
-	}
+	// Data Type
+	d.dataType = d.bitmap & 0x0f
+
+	// Print content of data frames for debugging
+	//if d.frameType == 2 {
+	//log.Printf("FrameType %02b, DT/VS %04b", d.frameType, d.dataType)
+	//dump(d.data)
+	//}
 
 	return d
 }
 
 func DMRDSummary(c string, d DMRData) {
-	log.Printf("%s DMRD seq=%d src=%d dst=%d slot=%v TG=%v PC=%v stream=%d hotspot=%d @ %s\n",
-		c, d.seq, d.src, d.dst, d.slot, d.group, d.private, d.stream, d.hotspot, d.addr.String())
+	log.Printf("%s DMRD seq=%d src=%d dst=%d slot=%v TG=%v PC=%v FT=%02b FV=%v FD=%v DT=%04b stream=%d repeater=%d @ %s\n",
+		c, d.seq, d.src, d.dst, d.slot, d.group, d.private, d.frameType, d.frameVoice, d.frameData, d.dataType, d.stream, d.repeater, d.addr.String())
 }
 
 func DMRDDump(c string, d DMRData) {

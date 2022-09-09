@@ -25,7 +25,7 @@ import (
 )
 
 const ProductName = "dmrcmd"
-const ProductVersion = "0.0.7"
+const ProductVersion = "0.0.8"
 
 func main() {
 
@@ -44,7 +44,7 @@ func main() {
 	}
 	log.Printf("Loaded configuration from %s", configFile)
 
-	// Start servers to handle each hotspot
+	// Start servers to handle each repeater
 	list := hotspot.GetList()
 	for _, id := range list {
 

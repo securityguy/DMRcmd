@@ -17,22 +17,25 @@ import (
 
 // Structure to hold configuration information
 type configData struct {
-	Debug    bool              `json:"debug"`
-	Minimum  uint32            `json:"minimum,omitempty"`
-	HA       ha.Config         `json:"ha,omitempty"`
-	Hotspots []hotspot.Hotspot `json:"hotspots"`
-	Events   []configEvent     `json:"events"`
+	Debug        bool              `json:"debug"`
+	DefaultVoice uint32            `json:"default_voice,omitempty"`
+	DefaultData  uint32            `json:"default_data,omitempty"`
+	HA           ha.Config         `json:"ha,omitempty"`
+	Hotspots     []hotspot.Hotspot `json:"hotspots"`
+	Events       []configEvent     `json:"events"`
 }
 
 type configEvent struct {
-	Enabled   bool              `json:"enabled"`
-	Name      string            `json:"name,omitempty"`
-	SRC       uint32            `json:"src,omitempty"`
-	DST       uint32            `json:"dst,omitempty"`
-	Client    uint32            `json:"hotspot,omitempty"`
-	IP        string            `json:"ip,omitempty"`
-	TalkGroup bool              `json:"talkgroup,omitempty"`
-	Action    configEventAction `json:"action,omitempty"`
+	Enabled       bool              `json:"enabled"`
+	Name          string            `json:"name,omitempty"`
+	SRC           uint32            `json:"src,omitempty"`
+	DST           uint32            `json:"dst,omitempty"`
+	Client        uint32            `json:"repeater,omitempty"`
+	IP            string            `json:"ip,omitempty"`
+	TalkGroup     bool              `json:"talkgroup,omitempty"`
+	RequiredData  uint32            `json:"required_data,omitempty"`
+	RequiredVoice uint32            `json:"required_voice,omitempty"`
+	Action        configEventAction `json:"action,omitempty"`
 }
 
 type configEventAction struct {
@@ -65,19 +68,28 @@ func configure(fileName string) error {
 	for _, h := range config.Hotspots {
 		if h.Enabled {
 			hotspot.Add(h)
-			log.Printf("Added hotspot %s [%d]", h.Name, h.ID)
+			log.Printf("Added repeater %s [%d]", h.Name, h.ID)
 			if len(h.Drop) > 0 {
 				log.Printf("Hotspot %s [%d] configured to drop: %v", h.Name, h.ID, h.Drop)
 			}
 		} else {
-			log.Printf("Ignoring disabled hotspot %s [%d]", h.Name, h.ID)
+			log.Printf("Ignoring disabled repeater %s [%d]", h.Name, h.ID)
 		}
 	}
 
 	// Iterate through events and log
-	for _, e := range config.Events {
+	for i, e := range config.Events {
 		if e.Enabled {
-			log.Printf("Loaded event %s src %d dst %d hotspot %d talkgroup %v ip %s action %s",
+			// If required frames not set, use defaults
+			if e.RequiredData == 0 {
+				config.Events[i].RequiredData = config.DefaultData
+			}
+
+			if e.RequiredVoice == 0 {
+				config.Events[i].RequiredVoice = config.DefaultVoice
+			}
+
+			log.Printf("Loaded event \"%s\" src %d dst %d repeater %d talkgroup %v ip %s action %s",
 				e.Name, e.SRC, e.DST, e.Client, e.TalkGroup, e.IP, actionToString(e.Action))
 		} else {
 			if config.Debug {

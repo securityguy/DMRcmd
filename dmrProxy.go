@@ -13,7 +13,7 @@ import (
 	"dmrcmd/hotspot"
 )
 
-// dmrProxy sits between a hotspot and a DMR server
+// dmrProxy sits between a repeater and a DMR server
 func dmrProxy(h hotspot.Hotspot) {
 
 	// Destination for packet forwarding
@@ -26,7 +26,7 @@ func dmrProxy(h hotspot.Hotspot) {
 		log.Fatal(err)
 	}
 
-	log.Printf("Proxy listening on %s for hotspot %s [%d] and forwarding to %s",
+	log.Printf("Proxy listening on %s for repeater %s [%d] and forwarding to %s",
 		h.Listen, h.Name, h.ID, h.Server)
 
 	//noinspection GoUnhandledErrorResult
@@ -46,12 +46,12 @@ func dmrProxy(h hotspot.Hotspot) {
 			continue
 		}
 
-		// We don't know what port the hotspot will use, so we need to keep track of it
+		// We don't know what port the repeater will use, so we need to keep track of it
 		if client == nil {
 			// Make sure this isn't from the server
 			if addr.String() != h.Server {
 				client = addr
-				log.Printf("Client address set to %s for hotspot %s [%d]", client.String(), h.Name, h.ID)
+				log.Printf("Client address set to %s for repeater %s [%d]", client.String(), h.Name, h.ID)
 			}
 		}
 

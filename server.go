@@ -26,13 +26,13 @@ type datagram struct {
 
 func startServer(id uint32) {
 
-	// CheckAuthenticated that hotspot entry exists
+	// CheckAuthenticated that repeater entry exists
 	if !hotspot.Exists(id) {
 		log.Printf("Unable to start server, %d does not exist", id)
 		return
 	}
 
-	// Get hotspot configuration
+	// Get repeater configuration
 	h := hotspot.Get(id)
 
 	// Start server or proxy

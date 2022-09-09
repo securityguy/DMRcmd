@@ -49,7 +49,7 @@ func RPTL(dg *datagram) {
 	log.Printf("Connection request from %d @ %s\n", id, dg.addr.String())
 
 	if hotspot.Exists(id) == false {
-		log.Printf("Unknown hotspot %d", id)
+		log.Printf("Unknown repeater %d", id)
 		sendNAK(dg)
 		return
 	}
@@ -61,7 +61,7 @@ func RPTL(dg *datagram) {
 	// Store salt
 	err := hotspot.Salt(id, salt)
 	if err != nil {
-		log.Printf("error adding salt to hotspot record")
+		log.Printf("error adding salt to repeater record")
 		sendNAK(dg)
 		return
 	}
@@ -87,7 +87,7 @@ func RPTK(dg *datagram) {
 	log.Printf("Authentication request from %d @ %s\n", id, dg.addr.String())
 
 	if hotspot.Exists(id) == false {
-		log.Printf("Unknown hotspot %d", id)
+		log.Printf("Unknown repeater %d", id)
 		sendNAK(dg)
 		return
 	}
@@ -133,7 +133,7 @@ func RPTPING(dg *datagram) {
 		return
 	}
 
-	// If hotspot is authenticated, reply
+	// If repeater is authenticated, reply
 	if hotspot.CheckAuthenticated(id, dg.addr.String()) {
 		sendPONG(dg)
 	} else {
@@ -155,19 +155,19 @@ func DMRD(dg *datagram) {
 
 	if dg.proxy {
 		// Set drop flag if required
-		dg.drop = hotspot.CheckDrop(d.hotspot, d.src, d.dst)
+		dg.drop = hotspot.CheckDrop(d.repeater, d.src, d.dst)
 
-		// CheckAuthenticated if datagram is from a local hotspot
+		// CheckAuthenticated if datagram is from a local repeater
 		if dg.local == false {
 			if config.Debug {
-				log.Printf("Not processing DMRD because source is not local %d @ %s\n", d.hotspot, d.addr.String())
+				log.Printf("Not processing DMRD because source is not local %d @ %s\n", d.repeater, d.addr.String())
 			}
 			return
 		}
 	} else {
-		// CheckAuthenticated if hotspot has authenticated
-		if !hotspot.CheckAuthenticated(d.hotspot, dg.addr.String()) {
-			log.Printf("Ignoring DMRD from unauthenticated %d @ %s\n", d.hotspot, d.addr.String())
+		// CheckAuthenticated if repeater has authenticated
+		if !hotspot.CheckAuthenticated(d.repeater, dg.addr.String()) {
+			log.Printf("Ignoring DMRD from unauthenticated %d @ %s\n", d.repeater, d.addr.String())
 			return
 		}
 	}
@@ -187,7 +187,7 @@ func DMRA(dg *datagram) {
 	radio := dg.data.GetUint32(8, 3)
 	alias := dg.data.GetString(13, 6)
 
-	// Is this from an authenticated hotspot?
+	// Is this from an authenticated repeater?
 	if hotspot.CheckAuthenticated(id, dg.addr.String()) || dg.proxy {
 		log.Printf("DMRA radio %d alias %s from %d @ %s\n", radio, alias, id, dg.addr.String())
 	} else {

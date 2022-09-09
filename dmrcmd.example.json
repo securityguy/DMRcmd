@@ -1,6 +1,7 @@
 {
   "debug": false,
-  "minimum": 18,
+  "minimum_voice": 10,
+  "minimum_data": 0,
   "hotspots": [
     {
       "name": "OpenSPOT",
@@ -80,6 +81,8 @@
       "name": "test4",
       "src": 1234567,
       "dst": 8999994,
+      "required_data": 1,
+      "required_voice": 1,
       "action": {
         "ha_script": "flash_lights"
       }

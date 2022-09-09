@@ -10,7 +10,7 @@ import (
 	"dmrcmd/bytes"
 )
 
-// Send NAC to hotspot (MSTNAK + id)
+// Send NAC to repeater (MSTNAK + id)
 func sendNAK(dg *datagram) {
 	log.Printf("Sending RPTNAK to %d @ %s\n", dg.hotspot.Uint32(), dg.addr.String())
 	reply := bytes.New()
@@ -19,7 +19,7 @@ func sendNAK(dg *datagram) {
 	sendUDP(dg, reply)
 }
 
-// Send ACK to hotspot (RPTACK + id)
+// Send ACK to repeater (RPTACK + id)
 func sendACK(dg *datagram) {
 	log.Printf("Sending RPTACK to %d @ %s\n", dg.hotspot.Uint32(), dg.addr.String())
 	reply := bytes.New()
@@ -28,7 +28,7 @@ func sendACK(dg *datagram) {
 	sendUDP(dg, reply)
 }
 
-// Send ping reply (pong) to hotspot
+// Send ping reply (pong) to repeater
 func sendPONG(dg *datagram) {
 	log.Printf("Pong to %d @ %s\n", dg.hotspot.Uint32(), dg.addr.String())
 	reply := bytes.New()

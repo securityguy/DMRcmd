@@ -22,10 +22,11 @@ const maxStreamAge int64 = 60
 var stream = make(map[uint32]streamData)
 
 type streamData struct {
-	id        uint32
-	last      int64
-	triggered bool
-	count     uint32
+	id         uint32
+	last       int64
+	voiceCount uint32
+	dataCount  uint32
+	considered []int
 }
 
 // Filter to identify new transmissions and trigger events
@@ -35,53 +36,77 @@ func eventFilter(d DMRData) {
 
 	// Check if we have seen this stream before
 	if _, ok := stream[d.stream]; ok {
-
 		// Yes, we have seen it before
 		s = stream[d.stream]
-		s.count++
 
-		// Have we already triggered on it?
-		if stream[d.stream].triggered {
-			s.last = now
-			stream[d.stream] = s
-			return
-		}
 	} else {
 		// First time seeing this stream
 		s.id = d.stream
-		s.count = 1
-		s.last = now
-		s.triggered = false
+		s.voiceCount = 0
+		s.dataCount = 0
+	}
+
+	// Update last time seen
+	// this is used for garbage collection
+	s.last = now
+
+	// Increment data or voice frame counter
+	if d.frameData {
+		s.dataCount++
+	} else {
+		s.voiceCount++
 	}
 
 	if config.Debug {
-		log.Printf("Minimum %d, count %d", config.Minimum, s.count)
+		log.Printf("Voice frames: %d, Data frames: %d", s.voiceCount, s.dataCount)
 	}
 
-	// Is this stream long enough to trigger an event?
-	// This is controlled by "seconds" in the global config
-	if config.Minimum > 0 {
-		if s.count < config.Minimum {
-			// Not long enough yet
-			stream[d.stream] = s
-			return
-		}
-	}
-
-	if config.Debug {
-		log.Println("Reached minimum DMR data frame count, processing events")
-	}
-
-	// Stream will now trigger applicable events
-	s.triggered = true
-
-	// Iterate through events and look matches
-	for _, c := range config.Events {
+	// Iterate through events and look for events to trigger
+	for i, c := range config.Events {
 
 		// Ignore events that are disabled
 		if c.Enabled == false {
 			continue
 		}
+
+		// Check if we have previously reached the trigger threshold for this event
+		done := false
+		for _, t := range s.considered {
+			if t == i {
+				// The required number of frames have previously been
+				// reached for this event and it has been checked below.
+				// Abort to avoid repeating events
+				done = true
+				break
+			}
+		}
+
+		if done {
+			continue
+		}
+
+		// check for required minimum number of frames
+		requiredFrames := false
+		if c.RequiredVoice > 0 && s.voiceCount >= c.RequiredVoice {
+			requiredFrames = true
+		}
+
+		if c.RequiredData > 0 && s.dataCount >= c.RequiredData {
+			requiredFrames = true
+		}
+
+		if requiredFrames == false {
+			continue
+		} else {
+			// Minimum number of frames reached, so no matter what happens
+			// after this point, we don't want to trigger again
+			if config.Debug {
+				log.Printf("Reached minimum frame count for event \"%s\"", c.Name)
+			}
+			s.considered = append(s.considered, i)
+		}
+
+		// Continue checking other parameters
 
 		// Only trigger on TGs if config talkgroup is true
 		if c.TalkGroup == false && d.group == true {
@@ -104,7 +129,7 @@ func eventFilter(d DMRData) {
 
 		// Match src if specified
 		if c.Client > 0 {
-			if c.Client != d.hotspot {
+			if c.Client != d.repeater {
 				continue
 			}
 		}
@@ -117,9 +142,9 @@ func eventFilter(d DMRData) {
 		}
 
 		// All criteria met, perform action
-		log.Printf("Triggered event %s from=%d to=%d hotspot=%d private=%v group=%v ip=%s action: %s",
-			c.Name, d.src, d.dst, d.hotspot, d.private, d.group, d.ip, actionToString(c.Action))
-		eventAction(d, c.Action)
+		log.Printf("Triggered event %s from=%d to=%d repeater=%d private=%v group=%v ip=%s action: %s",
+			c.Name, d.src, d.dst, d.repeater, d.private, d.group, d.ip, actionToString(c.Action))
+		go eventAction(d, c.Action)
 	}
 
 	// Store updated data
@@ -140,7 +165,7 @@ func eventAction(d DMRData, action configEventAction) {
 		if err != nil {
 			log.Printf("Error triggering Home Assistant script \"%s\": %s", action.HAScript, err.Error())
 		}
-		log.Printf("Successfully triggered Home Assistant script \"%s\"", action.HAScript)
+		log.Printf("Successfully considered Home Assistant script \"%s\"", action.HAScript)
 	}
 
 	if action.HAScene != "" {
@@ -149,7 +174,7 @@ func eventAction(d DMRData, action configEventAction) {
 		if err != nil {
 			log.Printf("Error triggering Home Assistant script \"%s\": %s", action.HAScene, err.Error())
 		}
-		log.Printf("Successfully triggered Home Assistant script \"%s\"", action.HAScene)
+		log.Printf("Successfully considered Home Assistant script \"%s\"", action.HAScene)
 	}
 }
 
@@ -173,7 +198,7 @@ func eventExecute(d DMRData, action configEventAction) {
 		case "$dst":
 			arg = fmt.Sprint(d.dst)
 		case "$client":
-			arg = fmt.Sprint(d.hotspot)
+			arg = fmt.Sprint(d.repeater)
 		case "$ip":
 			arg = d.ip
 		default:
