@@ -53,34 +53,28 @@ Notes:
 
 ### Configuration
 
-By default, configuration information is read from dmrcmd.json in the working directory.
-The full path to the configuration file can optionally be passed as the first (and only)
-command line argument.
+By default, configuration information is read from dmrcmd.json in the working directory. The full path to the configuration file can optionally be passed as the first (and only) command line argument.
 
-Note that most configuration objects have an "enabled" option. Unless it is set to true, the
-object will be ignored.
+Note that most configuration objects have an "enabled" option. Unless it is set to true, the object will be ignored.
 
-Additional configuration documentation will be added at a later date. In the interim,
-please refer to dmrcmd.example.json.
+Additional configuration documentation will be added at a later date. In the interim, please refer to dmrcmd.example.json.
 
-For security reasons, this program neither searches the execution path nor uses a shell to
-execute commands. The full path to a program or script to be executed must be provided
-in the configuration file.
+For security reasons, this program neither searches the execution path nor uses a shell to execute commands. The full path to a program or script to be executed must be provided in the configuration file.
 
-For similar reasons, command line arguments to be passed to the program or script must be specified as
-a list. Note that information from the DMR transmission (source ID, destination ID, client (repeater) ID,
-and IP address) can be substituted for command line arguments using $src, $dst, $ip, and $client respectively.
+For similar reasons, command line arguments to be passed to the program or script must be specified as a list. Note that information from the DMR transmission (source ID, destination ID, client (repeater) ID, and IP address) can be substituted for command line arguments using $src, $dst, $ip, and $client respectively.
 
 Within each event definition, **all specified conditions** must be met for the event to execute.
 
 By design, a single DMR transmission may result in multiple events executing.
 
-In order to avoid accidentally triggering events, a minimum number of DMR messages can be required.
-The default threshold of 18 requires the transmission to last for approximately one second
-before triggering an event. Testing revealed that even a quick press and release of the PTT
-sends upwards of 16 data packets, so lowering the value below 18 will likely result
-in the event triggering if the PTT is bumped. If this is not a concern, the "minimum" value in the
-configuration file can be changed to 1.
+In order to avoid accidentally triggering events, a minimum number of DMR voice or data frames can be required.
+The default number of required frames is specified in default_voice and default_data respectively. This can be
+overridden on a per-event basis using required_voice and required_data.
+
+The default value of requiring 10 voice frames requires the transmission to last for approximately one second
+before triggering an event, which should ignore a quick bump of the PTT. By default, data frames are ignored (set to 0). Users should test the defaults and adjust them as required.
+
+DMR emergency alerts consist of a single data frame. Therefore, to use a DMR emergency transmission to trigger an event, you will need to set required_data to 1 for the event you wish to trigger. Also note that each time the radio transmits the emergency alert it will be considered a separate event.
 
 ### Pi-Star and DRMGateway Users
 
