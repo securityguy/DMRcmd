@@ -57,7 +57,7 @@ By default, configuration information is read from dmrcmd.json in the working di
 
 Note that most configuration objects have an "enabled" option. Unless it is set to true, the object will be ignored.
 
-You must specify your local network in CIDR format (for example 192.168.0.0/24) in "network_local". Only hotspots within the specified network will be allowed to connect. In addition to the security benefits, this allows the proxy module to easily differentiate between a hotspot and a server, and track the hotspot address and port if it changes.
+You must update "local_network" in CIDR format (for example 192.168.0.0/24). Only hotspots within the specified network will be allowed to connect. In addition to the security benefits, this allows the proxy module to reliably track the hotspot address and port if it changes. The server module will also ignore UDP datagrams that do not originate from the configured local network.
 
 Additional configuration documentation will be added at a later date. In the interim, please refer to dmrcmd.example.json.
 
