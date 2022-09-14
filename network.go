@@ -10,10 +10,12 @@ import (
 	"strings"
 )
 
+// isLocal returns true if the address falls within the configured local network
 func isLocal(addr net.Addr) bool {
 	return isInNetwork(addr, config.LocalNet)
 }
 
+// isInNetwork returns true if addr is within cidr
 func isInNetwork(addr net.Addr, cidr string) bool {
 
 	// Parse CIDR
@@ -23,10 +25,10 @@ func isInNetwork(addr net.Addr, cidr string) bool {
 		return false
 	}
 
-	// split addr.string() into ip and port
-	parts := strings.Split(addr.String(), ":")
+	// split address into ip and port
+	parts := strings.Split(safeAddrString(addr), ":")
 	if len(parts) < 1 {
-		log.Printf("Error splitting address into IP and port %s", addr.String())
+		log.Printf("Error splitting address into IP and port %s", safeAddrString(addr))
 		return false
 	}
 
@@ -41,4 +43,12 @@ func isInNetwork(addr net.Addr, cidr string) bool {
 		return true
 	}
 	return false
+}
+
+// safeAddrString returns a string or "" if addr is nil
+func safeAddrString(addr net.Addr) string {
+	if addr == nil {
+		return ""
+	}
+	return addr.String()
 }

@@ -42,7 +42,7 @@ func dmrServer(h hotspot.Hotspot) {
 
 		// Ignore packets that are not from the local network
 		if !isLocal(addr) {
-			log.Printf("Ignoring non-local packet from %s to %s [%d]", addr.String(), h.Name, h.ID)
+			log.Printf("Ignoring non-local packet from %s to %s [%d]", safeAddrString(addr), h.Name, h.ID)
 			continue
 		}
 
@@ -58,7 +58,7 @@ func dmrServer(h hotspot.Hotspot) {
 		}
 
 		if config.Debug {
-			log.Printf("Received %d bytes from %s", n, dg.addr.String())
+			log.Printf("Received %d bytes from %s", n, safeAddrString(dg.addr))
 			dump(dg.data)
 		}
 

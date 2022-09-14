@@ -30,7 +30,7 @@ func dispatchMsg(dg *datagram) {
 		DMRA(dg)
 	} else {
 		if !dg.proxy {
-			log.Printf("Unknown packet type from %s", dg.addr.String())
+			log.Printf("Unknown packet type from %s", safeAddrString(dg.addr))
 		}
 	}
 }
@@ -46,7 +46,7 @@ func RPTL(dg *datagram) {
 	dg.hotspot = dg.data.Get(4, 4)
 	id := dg.hotspot.Uint32()
 
-	log.Printf("Connection request from %d @ %s\n", id, dg.addr.String())
+	log.Printf("Connection request from %d @ %s\n", id, safeAddrString(dg.addr))
 
 	if hotspot.Exists(id) == false {
 		log.Printf("Unknown repeater %d", id)
@@ -84,7 +84,7 @@ func RPTK(dg *datagram) {
 	dg.hotspot = dg.data.Get(4, 4)
 	id := dg.hotspot.Uint32()
 	authBytes := dg.data.Get(8, 32)
-	log.Printf("Authentication request from %d @ %s\n", id, dg.addr.String())
+	log.Printf("Authentication request from %d @ %s\n", id, safeAddrString(dg.addr))
 
 	if hotspot.Exists(id) == false {
 		log.Printf("Unknown repeater %d", id)
@@ -92,11 +92,11 @@ func RPTK(dg *datagram) {
 		return
 	}
 
-	if hotspot.Authenticate(id, authBytes, dg.addr.String()) {
-		log.Printf("Authenticated %d @ %s\n", id, dg.addr.String())
+	if hotspot.Authenticate(id, authBytes, safeAddrString(dg.addr)) {
+		log.Printf("Authenticated %d @ %s\n", id, safeAddrString(dg.addr))
 		sendACK(dg)
 	} else {
-		log.Printf("Authentication failed for %d @ %s\n", id, dg.addr.String())
+		log.Printf("Authentication failed for %d @ %s\n", id, safeAddrString(dg.addr))
 		sendNAK(dg)
 	}
 }
@@ -111,9 +111,9 @@ func RPTC(dg *datagram) {
 
 	dg.hotspot = dg.data.Get(4, 4)
 	id := dg.hotspot.Uint32()
-	log.Printf("Configuration from %d @ %s\n", id, dg.addr.String())
+	log.Printf("Configuration from %d @ %s\n", id, safeAddrString(dg.addr))
 
-	if hotspot.CheckAuthenticated(id, dg.addr.String()) {
+	if hotspot.CheckAuthenticated(id, safeAddrString(dg.addr)) {
 		// Send ack
 		sendACK(dg)
 	} else {
@@ -126,7 +126,7 @@ func RPTC(dg *datagram) {
 func RPTPING(dg *datagram) {
 	dg.hotspot = dg.data.Get(7, 4)
 	id := dg.hotspot.Uint32()
-	log.Printf("Ping from %d at %s\n", id, dg.addr.String())
+	log.Printf("Ping from %d at %s\n", id, safeAddrString(dg.addr))
 
 	// If proxying, take no further action
 	if dg.proxy {
@@ -134,10 +134,10 @@ func RPTPING(dg *datagram) {
 	}
 
 	// If repeater is authenticated, reply
-	if hotspot.CheckAuthenticated(id, dg.addr.String()) {
+	if hotspot.CheckAuthenticated(id, safeAddrString(dg.addr)) {
 		sendPONG(dg)
 	} else {
-		log.Printf("Client %d @ %s is not authenticated\n", id, dg.addr.String())
+		log.Printf("Client %d @ %s is not authenticated\n", id, safeAddrString(dg.addr))
 		sendNAK(dg)
 	}
 }
@@ -146,7 +146,7 @@ func RPTPING(dg *datagram) {
 func MSTPONG(dg *datagram) {
 	dg.hotspot = dg.data.Get(7, 4)
 	id := dg.hotspot.Uint32()
-	log.Printf("Pong to %d from %s\n", id, dg.addr.String())
+	log.Printf("Pong to %d from %s\n", id, safeAddrString(dg.addr))
 }
 
 // DMRD - DMR Data
@@ -160,14 +160,14 @@ func DMRD(dg *datagram) {
 		// CheckAuthenticated if datagram is from a local repeater
 		if dg.local == false {
 			if config.Debug {
-				log.Printf("Not processing DMRD because source is not local %d @ %s\n", d.repeater, d.addr.String())
+				log.Printf("Not processing DMRD because source is not local %d @ %s\n", d.repeater, safeAddrString(dg.addr))
 			}
 			return
 		}
 	} else {
 		// CheckAuthenticated if repeater has authenticated
-		if !hotspot.CheckAuthenticated(d.repeater, dg.addr.String()) {
-			log.Printf("Ignoring DMRD from unauthenticated %d @ %s\n", d.repeater, d.addr.String())
+		if !hotspot.CheckAuthenticated(d.repeater, safeAddrString(dg.addr)) {
+			log.Printf("Ignoring DMRD from unauthenticated %d @ %s\n", d.repeater, safeAddrString(dg.addr))
 			return
 		}
 	}
@@ -188,9 +188,9 @@ func DMRA(dg *datagram) {
 	alias := dg.data.GetString(13, 6)
 
 	// Is this from an authenticated repeater?
-	if hotspot.CheckAuthenticated(id, dg.addr.String()) || dg.proxy {
-		log.Printf("DMRA radio %d alias %s from %d @ %s\n", radio, alias, id, dg.addr.String())
+	if hotspot.CheckAuthenticated(id, safeAddrString(dg.addr)) || dg.proxy {
+		log.Printf("DMRA radio %d alias %s from %d @ %s\n", radio, alias, id, safeAddrString(dg.addr))
 	} else {
-		log.Printf("Igoring DMRA from unauthenticated %d @ %s\n", id, dg.addr.String())
+		log.Printf("Igoring DMRA from unauthenticated %d @ %s\n", id, safeAddrString(dg.addr))
 	}
 }

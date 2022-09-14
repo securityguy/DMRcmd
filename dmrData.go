@@ -35,7 +35,7 @@ type DMRData struct {
 func DMRDParse(b bytes.Bytes, addr net.Addr) DMRData {
 	var d DMRData
 	d.addr = addr
-	d.ip = strings.Split(addr.String(), ":")[0]
+	d.ip = strings.Split(safeAddrString(addr), ":")[0]
 	d.seq = b.GetUint32(4, 1)
 	d.src = b.GetUint32(5, 3)
 	d.dst = b.GetUint32(8, 3)
@@ -85,7 +85,8 @@ func DMRDParse(b bytes.Bytes, addr net.Addr) DMRData {
 
 func DMRDSummary(c string, d DMRData) {
 	log.Printf("%s DMRD seq=%d src=%d dst=%d slot=%v TG=%v PC=%v FT=%02b FV=%v FD=%v DT=%04b stream=%d repeater=%d @ %s\n",
-		c, d.seq, d.src, d.dst, d.slot, d.group, d.private, d.frameType, d.frameVoice, d.frameData, d.dataType, d.stream, d.repeater, d.addr.String())
+		c, d.seq, d.src, d.dst, d.slot, d.group, d.private, d.frameType,
+		d.frameVoice, d.frameData, d.dataType, d.stream, d.repeater, safeAddrString(d.addr))
 }
 
 func DMRDDump(c string, d DMRData) {

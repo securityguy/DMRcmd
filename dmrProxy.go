@@ -58,9 +58,13 @@ func dmrProxy(h hotspot.Hotspot) {
 		// We don't know what port the repeater will use, so we need to keep track of it
 		if isLocal(addr) {
 			// Make sure this isn't from the server just in case
-			if addr.String() != h.Server {
-				client = addr
-				log.Printf("Client address set to %s for repeater %s [%d]", client.String(), h.Name, h.ID)
+			if safeAddrString(addr) != h.Server {
+				// Is this a change?
+				if safeAddrString(client) != safeAddrString(addr) {
+					client = addr
+					log.Printf("Client address set to %s for repeater %s [%d]",
+						safeAddrString(client), h.Name, h.ID)
+				}
 			}
 		}
 
@@ -81,12 +85,12 @@ func dmrProxy(h hotspot.Hotspot) {
 		}
 
 		// Set local flag if applicable
-		if addr.String() == client.String() {
+		if safeAddrString(addr) == safeAddrString(client) {
 			dg.local = true
 		}
 
 		if config.Debug {
-			log.Printf("Received %d bytes from %s", n, dg.addr.String())
+			log.Printf("Received %d bytes from %s", n, safeAddrString(dg.addr))
 			dump(dg.data)
 		}
 
@@ -95,13 +99,13 @@ func dmrProxy(h hotspot.Hotspot) {
 
 		if dg.drop {
 			if config.Debug {
-				log.Printf("Proxy dropping %d bytes from %s", n, dg.addr.String())
+				log.Printf("Proxy dropping %d bytes from %s", n, safeAddrString(dg.addr))
 			}
 			continue
 		}
 
 		// Determine destination
-		if addr.String() == h.Server {
+		if safeAddrString(addr) == h.Server {
 			dest = client
 		} else {
 			dest = server
@@ -116,7 +120,7 @@ func dmrProxy(h hotspot.Hotspot) {
 		}
 
 		if config.Debug {
-			log.Printf("Sent %d bytes to %s", n, dest.String())
+			log.Printf("Sent %d bytes to %s", n, safeAddrString(dest))
 		}
 
 		// Get current time
