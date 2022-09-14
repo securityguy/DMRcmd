@@ -19,6 +19,7 @@ func dmrProxy(h hotspot.Hotspot) {
 	// Destination for packet forwarding
 	var dest net.Addr = nil
 	var client net.Addr = nil
+	var server net.Addr = nil
 
 	// Listen for incoming udp packets
 	pc, err := net.ListenPacket("udp", h.Listen)
@@ -35,6 +36,14 @@ func dmrProxy(h hotspot.Hotspot) {
 	// Set last purge to current time
 	lastPurge := time.Now().Unix()
 
+	// Get server address
+	server, err = net.ResolveUDPAddr("udp", h.Server)
+	if err != nil {
+		log.Printf("Error parsing server address, terminating proxy for repeater %s [%d]: %s",
+			h.Name, h.ID, err.Error())
+		return
+	}
+
 	// Loop and receive UDP datagrams
 	for {
 
@@ -47,12 +56,17 @@ func dmrProxy(h hotspot.Hotspot) {
 		}
 
 		// We don't know what port the repeater will use, so we need to keep track of it
-		if client == nil {
-			// Make sure this isn't from the server
+		if isLocal(addr) {
+			// Make sure this isn't from the server just in case
 			if addr.String() != h.Server {
 				client = addr
 				log.Printf("Client address set to %s for repeater %s [%d]", client.String(), h.Name, h.ID)
 			}
+		}
+
+		// If we haven't obtained a client address yet, don't proceed
+		if client == nil {
+			continue
 		}
 
 		// Create and populate structure
@@ -90,17 +104,14 @@ func dmrProxy(h hotspot.Hotspot) {
 		if addr.String() == h.Server {
 			dest = client
 		} else {
-			dest, err = net.ResolveUDPAddr("udp", h.Server)
-			if err != nil {
-				log.Printf("Error parsing server address")
-				break
-			}
+			dest = server
 		}
 
 		// Send the datagram
 		n, err = pc.WriteTo(dg.data, dest)
 		if err != nil {
-			log.Printf("SEND ERROR!")
+			log.Printf("Send error on proxy for repeater %s [%d]: %s",
+				h.Name, h.ID, err.Error())
 			continue
 		}
 

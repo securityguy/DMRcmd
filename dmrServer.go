@@ -40,6 +40,12 @@ func dmrServer(h hotspot.Hotspot) {
 			continue
 		}
 
+		// Ignore packets that are not from the local network
+		if !isLocal(addr) {
+			log.Printf("Ignoring non-local packet from %s to %s [%d]", addr.String(), h.Name, h.ID)
+			continue
+		}
+
 		// Create and populate structure
 		dg := datagram{
 			pc:      pc,

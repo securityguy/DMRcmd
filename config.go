@@ -20,6 +20,7 @@ type configData struct {
 	Debug        bool              `json:"debug"`
 	DefaultVoice uint32            `json:"default_voice,omitempty"`
 	DefaultData  uint32            `json:"default_data,omitempty"`
+	LocalNet     string            `json:"local_network,omitempty"`
 	HA           ha.Config         `json:"ha,omitempty"`
 	Hotspots     []hotspot.Hotspot `json:"hotspots"`
 	Events       []configEvent     `json:"events"`
@@ -97,5 +98,11 @@ func configure(fileName string) error {
 			}
 		}
 	}
+
+	// Sanity checks
+	if config.LocalNet == "" {
+		return errors.New("fatal configuration error, local_network is not defined")
+	}
+
 	return nil
 }
