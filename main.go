@@ -18,19 +18,22 @@
 package main
 
 import (
+	"dmrcmd/hotspot"
 	"log"
 	"os"
-
-	"dmrcmd/hotspot"
+	"os/signal"
+	"runtime"
+	"syscall"
 )
 
 const ProductName = "dmrcmd"
-const ProductVersion = "0.0.11"
+const ProductVersion = "0.0.12"
 
 func main() {
 
 	// Say hello
-	log.Printf("Started %s version %s", ProductName, ProductVersion)
+	log.Printf("Starting %s v%s on %s/%s",
+		ProductName, ProductVersion, runtime.GOOS, runtime.GOARCH)
 
 	// Load configuration - optionally using command line argument
 	configFile := "dmrcmd.json"
@@ -44,6 +47,21 @@ func main() {
 	}
 	log.Printf("Loaded configuration from %s", configFile)
 
+	// Setup signal catching
+	signals := make(chan os.Signal, 1)
+
+	// Catch signals
+	signal.Notify(signals, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+
+	// method invoked upon seeing signal
+	go func() {
+		for {
+			s := <-signals
+			log.Printf("Received signal: %v", s)
+			AppCleanup()
+		}
+	}()
+
 	// Start servers to handle each repeater
 	list := hotspot.GetList()
 	for _, id := range list {
@@ -52,7 +70,16 @@ func main() {
 		go startServer(id)
 	}
 
-	for {
-	} // TODO -- add signal handling and graceful exit
+	// Loop until terminated. Select uses less CPU than for{}
+	select {}
+}
 
+func AppCleanup() {
+
+	// Log exit
+	log.Printf("Stopping %s v%s on %s/%s",
+		ProductName, ProductVersion, runtime.GOOS, runtime.GOARCH)
+
+	// Exit
+	os.Exit(0)
 }
